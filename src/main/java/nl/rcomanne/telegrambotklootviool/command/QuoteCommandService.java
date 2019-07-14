@@ -19,13 +19,13 @@ public class QuoteCommandService extends AbstractCommandService {
     }
 
     @Override
-    void handle(long chatId) {
+    public void handle(long chatId) {
        Quote selected = quoteService.getRandomQuote();
        sendAnimationWithCaption(chatId, selected.getImgLink(), selected.getMessage());
     }
 
     @Override
-    void handle(long chatId, String query) {
+    public void handle(long chatId, String query) {
         Quote selected = quoteService.findByMessage(query);
         sendAnimationWithCaption(chatId, selected.getImgLink(), selected.getMessage());
     }

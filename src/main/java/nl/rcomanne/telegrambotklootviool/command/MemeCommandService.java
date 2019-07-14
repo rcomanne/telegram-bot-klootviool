@@ -17,7 +17,7 @@ public class MemeCommandService extends AbstractCommandService {
     private final MemeService memeService;
 
     @Override
-    void handle(long chatId) {
+    public void handle(long chatId) {
         MemeItem selected = memeService.getRandom();
         if (selected.isAnimated()) {
             sendAnimation(chatId, selected.getImageLink());
@@ -27,7 +27,7 @@ public class MemeCommandService extends AbstractCommandService {
     }
 
     @Override
-    void handle(long chatId, String query) {
+    public void handle(long chatId, String query) {
         // handle
     }
 

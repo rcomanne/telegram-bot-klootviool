@@ -14,9 +14,9 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
         super(ApiContext.getInstance(DefaultBotOptions.class));
     }
 
-    abstract void handle(final long chatId);
+    public abstract void handle(final long chatId);
 
-    abstract void handle(final long chatId, String query);
+    public abstract void handle(final long chatId, String query);
 
     void sendAnimation(final long chatId, final String imageLink) {
         SendAnimation sendAnimation = new SendAnimation()

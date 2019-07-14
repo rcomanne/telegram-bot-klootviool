@@ -20,7 +20,7 @@ public class ProgrammerHumorCommandService extends AbstractCommandService {
         this.service = service;
     }
 
-    void handle(long chatId) {
+    public void handle(long chatId) {
         PhItem selected = service.getRandomPhItem();
         if (selected.isAnimated()) {
             sendAnimation(chatId, selected.getImageLink());
@@ -29,7 +29,7 @@ public class ProgrammerHumorCommandService extends AbstractCommandService {
         }
     }
 
-    void handle(long chatId, String query) {
+    public void handle(long chatId, String query) {
         // todo: make search available when using titles or sum
         PhItem selected = service.getRandomPhItem();
         if (selected.getImageLink().contains(".gif")) {

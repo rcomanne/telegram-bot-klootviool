@@ -18,13 +18,13 @@ public class PicCommandService extends AbstractCommandService {
     private final MemeService memeService;
 
     @Override
-    void handle(long chatId) {
+    public void handle(long chatId) {
         // we need input to search
         sendPhotoWithCaption(chatId, memeService.getRandom().getImageLink(), "we need a query to search images!");
     }
 
     @Override
-    void handle(long chatId, String query) {
+    public void handle(long chatId, String query) {
         sendPhoto(chatId, googleSearchService.searchImageNSFW(query));
     }
 
