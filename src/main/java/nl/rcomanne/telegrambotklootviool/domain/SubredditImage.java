@@ -2,14 +2,10 @@ package nl.rcomanne.telegrambotklootviool.domain;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
 @Builder
-@Document(collection = "programmerhumor")
-public class PhItem {
-    @Id
+@Data
+public class SubredditImage {
     private String id;
     private String title;
     private boolean animated;

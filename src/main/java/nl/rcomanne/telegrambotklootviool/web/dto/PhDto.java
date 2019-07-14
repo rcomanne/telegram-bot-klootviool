@@ -12,7 +12,7 @@ public class PhDto {
     public PhItem toPhItem() {
         return PhItem.builder()
                 .id(UUID.randomUUID().toString())
-                .imgLink(this.imageLink)
+                .imageLink(this.imageLink)
                 .build();
     }
 }

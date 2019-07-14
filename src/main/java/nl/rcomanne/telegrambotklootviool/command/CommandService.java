@@ -17,6 +17,8 @@ public class CommandService {
 
     private final QuoteCommandService quoteCommandService;
     private final ProgrammerHumorCommandService programmerHumorCommandService;
+    private final MemeCommandService memeCommandService;
+    private final PicCommandService picCommandService;
 
     public void process(final long chatId, final MessageEntity entity) {
         log.debug("processing command");
@@ -28,6 +30,12 @@ public class CommandService {
             case "ph":
                 programmerHumorCommandService.handle(chatId);
                 break;
+            case "memes":
+                memeCommandService.handle(chatId);
+                break;
+            case "pic":
+                picCommandService.handle(chatId);
+                break;
             default:
                 throw new IllegalArgumentException("unknown command: " + command);
         }
@@ -38,10 +46,16 @@ public class CommandService {
         String command = getCleanCommandName(entity, username);
         switch (command) {
             case "quote":
-                quoteCommandService.handleWithQuery(chatId, query);
+                quoteCommandService.handle(chatId, query);
                 break;
             case "ph":
-                programmerHumorCommandService.handleWithQuery(chatId, query);
+                programmerHumorCommandService.handle(chatId, query);
+                break;
+            case "memes":
+                memeCommandService.handle(chatId, query);
+                break;
+            case "pic":
+                picCommandService.handle(chatId, query);
                 break;
             default:
                 throw new IllegalArgumentException("unknown command: " + command);

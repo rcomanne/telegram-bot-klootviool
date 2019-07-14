@@ -25,7 +25,7 @@ public class QuoteCommandService extends AbstractCommandService {
     }
 
     @Override
-    void handleWithQuery(long chatId, String query) {
+    void handle(long chatId, String query) {
         Quote selected = quoteService.findByMessage(query);
         sendAnimationWithCaption(chatId, selected.getImgLink(), selected.getMessage());
     }

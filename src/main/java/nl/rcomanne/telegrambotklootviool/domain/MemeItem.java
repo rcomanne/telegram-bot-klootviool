@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document(collection = "programmerhumor")
-public class PhItem {
+@Document(collection = "memes")
+public class MemeItem {
     @Id
     private String id;
     private String title;

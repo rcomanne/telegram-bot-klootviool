@@ -22,20 +22,20 @@ public class ProgrammerHumorCommandService extends AbstractCommandService {
 
     void handle(long chatId) {
         PhItem selected = service.getRandomPhItem();
-        if (selected.getImgLink().contains(".gif")) {
-            sendAnimation(chatId, selected.getImgLink());
+        if (selected.isAnimated()) {
+            sendAnimation(chatId, selected.getImageLink());
         } else {
-            sendPhoto(chatId, selected.getImgLink());
+            sendPhoto(chatId, selected.getImageLink());
         }
     }
 
-    void handleWithQuery(long chatId, String query) {
+    void handle(long chatId, String query) {
         // todo: make search available when using titles or sum
         PhItem selected = service.getRandomPhItem();
-        if (selected.getImgLink().contains(".gif")) {
-            sendAnimation(chatId, selected.getImgLink());
+        if (selected.getImageLink().contains(".gif")) {
+            sendAnimation(chatId, selected.getImageLink());
         } else {
-            sendPhoto(chatId, selected.getImgLink());
+            sendPhoto(chatId, selected.getImageLink());
         }
     }
 

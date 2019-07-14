@@ -16,7 +16,7 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
 
     abstract void handle(final long chatId);
 
-    abstract void handleWithQuery(final long chatId, String query);
+    abstract void handle(final long chatId, String query);
 
     void sendAnimation(final long chatId, final String imageLink) {
         SendAnimation sendAnimation = new SendAnimation()

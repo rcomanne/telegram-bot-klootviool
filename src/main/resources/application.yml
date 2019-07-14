@@ -1,1 +1,14 @@
+spring:
+  application:
+    name: telegram-bot-klootviool
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: klootviool
+      username: klootviool
 
+imgur:
+  url:
+    base: https://api.imgur.com/3
+    subreddit: ${imgur.url.base}/gallery/r/
