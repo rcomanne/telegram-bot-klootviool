@@ -2,10 +2,7 @@ package nl.rcomanne.telegrambotklootviool.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.rcomanne.telegrambotklootviool.command.MemeCommandService;
-import nl.rcomanne.telegrambotklootviool.command.PicCommandService;
-import nl.rcomanne.telegrambotklootviool.command.ProgrammerHumorCommandService;
-import nl.rcomanne.telegrambotklootviool.command.QuoteCommandService;
+import nl.rcomanne.telegrambotklootviool.command.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
@@ -23,6 +20,7 @@ public class CommandService {
     private final ProgrammerHumorCommandService programmerHumorCommandService;
     private final MemeCommandService memeCommandService;
     private final PicCommandService picCommandService;
+    private final SubredditCommandService subredditCommandService;
 
     public void process(final long chatId, final MessageEntity entity) {
         log.debug("processing command");
@@ -39,6 +37,10 @@ public class CommandService {
                 break;
             case "pic":
                 picCommandService.handle(chatId);
+                break;
+            case "subreddit":
+            case "r":
+                subredditCommandService.handle(chatId);
                 break;
             default:
                 throw new IllegalArgumentException("unknown command: " + command);
@@ -60,6 +62,10 @@ public class CommandService {
                 break;
             case "pic":
                 picCommandService.handle(chatId, query);
+                break;
+            case "subreddit":
+            case "r":
+                subredditCommandService.handle(chatId);
                 break;
             default:
                 throw new IllegalArgumentException("unknown command: " + command);

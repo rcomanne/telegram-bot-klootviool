@@ -11,4 +11,5 @@ public class SubredditImage {
     private boolean animated;
     private boolean nsfw;
     private String imageLink;
+    private String subreddit;
 }

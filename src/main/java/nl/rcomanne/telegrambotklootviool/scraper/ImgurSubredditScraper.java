@@ -28,12 +28,12 @@ public class ImgurSubredditScraper {
 
     private final RestTemplate restTemplate;
 
-    public List<SubredditImage> scrapeSubreddit(String subreddit) {
+    public List<SubredditImage> scrapeSubreddit(String subreddit, String window) {
         int page = 0;
         List<SubredditImage> images = new ArrayList<>();
         do {
             try {
-                ImgurSubredditResponse subredditResponse = retrieveItems(subreddit, page++);
+                ImgurSubredditResponse subredditResponse = retrieveItems(subreddit, page++, window);
                 if (subredditResponse == null) {
                     log.warn("subreddit response is null");
                     throw new IllegalStateException("expected correct response from subreddit");
@@ -62,13 +62,14 @@ public class ImgurSubredditScraper {
                     .animated(item.isAnimated())
                     .nsfw(item.isNsfw())
                     .imageLink(item.getLink())
+                    .subreddit(item.getSection())
                     .build());
         }
         return images;
     }
 
-    private ImgurSubredditResponse retrieveItems(String subreddit, int page) {
-        final String url = baseUrl + "/" + subreddit + "/top" + "/week" + "/" + page;
+    private ImgurSubredditResponse retrieveItems(String subreddit, int page, String window) {
+        final String url = baseUrl + "/" + subreddit + "/top" + "/" + window + "/" + page;
         log.debug("scraping with url {}", url);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, clientId);
