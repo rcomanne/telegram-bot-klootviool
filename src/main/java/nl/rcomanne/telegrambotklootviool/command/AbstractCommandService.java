@@ -63,4 +63,5 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
             log.error("failed to send image", e);
         }
     }
+
 }

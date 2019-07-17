@@ -13,7 +13,7 @@ pipeline {
 
 	tools {
 		jdk 'jdk-11'
-		maven 'mvn-3.6.0'
+		maven 'mvn'
 	}
 
 	parameters {
