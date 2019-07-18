@@ -6,7 +6,6 @@ import org.telegram.telegrambots.ApiContextInitializer;
 
 @SpringBootApplication
 public class TelegramBotApplication {
-
     public static void main(String[] args) {
         ApiContextInitializer.init();
 

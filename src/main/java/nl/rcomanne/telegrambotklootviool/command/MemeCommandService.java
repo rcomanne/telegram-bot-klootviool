@@ -2,8 +2,10 @@ package nl.rcomanne.telegrambotklootviool.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.rcomanne.telegrambotklootviool.domain.MemeItem;
-import nl.rcomanne.telegrambotklootviool.service.MemeService;
+
+import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,13 @@ public class MemeCommandService extends AbstractCommandService {
     @Value("${bot.token}")
     private String token;
 
-    private final MemeService memeService;
+    private static final String SUBREDDIT_NAME = "memes";
+
+    private final SubredditImageService service;
 
     @Override
     public void handle(long chatId) {
-        MemeItem selected = memeService.getRandom();
+        SubredditImage selected = service.findRandomBySubreddit(SUBREDDIT_NAME);
         if (selected.isAnimated()) {
             sendAnimation(chatId, selected.getImageLink());
         } else {
@@ -28,7 +32,12 @@ public class MemeCommandService extends AbstractCommandService {
 
     @Override
     public void handle(long chatId, String query) {
-        // handle
+        SubredditImage selected = service.findBySubredditAndTitle(SUBREDDIT_NAME, query);
+        if (selected.isAnimated()) {
+            sendAnimation(chatId, selected.getImageLink());
+        } else {
+            sendPhoto(chatId, selected.getImageLink());
+        }
     }
 
     @Override

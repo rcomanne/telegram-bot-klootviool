@@ -15,3 +15,7 @@ imgur:
   url:
     base: https://api.imgur.com/3
     subreddit: ${imgur.url.base}/gallery/r/
+
+logging:
+  level:
+    nl.rcomanne: DEBUG

@@ -1,10 +1,12 @@
 package nl.rcomanne.telegrambotklootviool.scraper;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponse;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponseItem;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -38,7 +40,7 @@ public class ImgurSubredditScraper {
                     log.warn("subreddit response is null");
                     throw new IllegalStateException("expected correct response from subreddit");
                 }
-                if (subredditResponse.getData().size() == 0) {
+                if (subredditResponse.getData().isEmpty()) {
                     // got empty page -- no more images
                     return images;
                 }

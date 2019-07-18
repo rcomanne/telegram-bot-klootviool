@@ -29,7 +29,7 @@ public class SubredditCommandService extends AbstractCommandService {
     @Override
     public void handle(long chatId, String query) {
         // handle
-        SubredditImage selected = service.find(query);
+        SubredditImage selected = service.findRandomBySubreddit(query);
         if (selected.isAnimated()) {
             sendAnimation(chatId, selected.getImageLink());
         } else {

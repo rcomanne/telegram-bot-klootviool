@@ -23,8 +23,8 @@ public class CommandService {
     private final SubredditCommandService subredditCommandService;
 
     public void process(final long chatId, final MessageEntity entity) {
-        log.debug("processing command");
         String command = getCleanCommandName(entity, username);
+        log.debug("processing command {}", command);
         switch (command) {
             case "quote":
                 quoteCommandService.handle(chatId);
@@ -48,8 +48,8 @@ public class CommandService {
     }
 
     public void processWithQuery(final long chatId, final MessageEntity entity, final String query) {
-        log.debug("processing command with query");
         String command = getCleanCommandName(entity, username);
+        log.debug("processing command {} with query", command);
         switch (command) {
             case "quote":
                 quoteCommandService.handle(chatId, query);
@@ -65,7 +65,7 @@ public class CommandService {
                 break;
             case "subreddit":
             case "r":
-                subredditCommandService.handle(chatId);
+                subredditCommandService.handle(chatId, query);
                 break;
             default:
                 throw new IllegalArgumentException("unknown command: " + command);

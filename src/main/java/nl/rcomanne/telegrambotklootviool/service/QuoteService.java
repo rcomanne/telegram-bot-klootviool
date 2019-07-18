@@ -26,6 +26,9 @@ public class QuoteService {
     public Quote getRandomQuote() {
         log.debug("finding random quote");
         List<Quote> quotes = repository.findAll();
+        if (quotes.isEmpty()) {
+            throw new IllegalStateException("no quotes available");
+        }
         return quotes.get(r.nextInt(quotes.size()));
     }
 

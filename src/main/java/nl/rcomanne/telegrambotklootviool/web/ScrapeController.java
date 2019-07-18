@@ -1,19 +1,20 @@
 package nl.rcomanne.telegrambotklootviool.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
 import nl.rcomanne.telegrambotklootviool.service.MemeService;
-import nl.rcomanne.telegrambotklootviool.service.ProgrammerHumorService;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -23,7 +24,6 @@ public class ScrapeController {
     private static final String DEF_WINDOW = "day";
 
     private final ImgurSubredditScraper scraper;
-    private final ProgrammerHumorService programmerHumorService;
     private final MemeService memeService;
     private final SubredditImageService imageService;
 
@@ -39,12 +39,6 @@ public class ScrapeController {
         return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, DEF_WINDOW));
     }
 
-    @GetMapping("/ph")
-    public ResponseEntity scrapeProgrammerHumorSubreddit() {
-        log.debug("scraping memes programmerHumor for images");
-        List<SubredditImage> images = scraper.scrapeSubreddit("programmerhumor", DEF_WINDOW);
-        return ResponseEntity.ok(programmerHumorService.saveFromScraper(images));
-    }
 
     @GetMapping("/memes")
     public ResponseEntity scrapeMemesSubreddit() {
