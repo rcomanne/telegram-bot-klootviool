@@ -2,3 +2,7 @@ quote - random mastermovies quote
 ph - get a random PH pic
 memes - get a random meme
 pic - search a picture online
+subreddit - get a random picture from subreddit <query>
+r - shorter version of subreddit
+update - update a subreddit <query>
+

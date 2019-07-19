@@ -1,13 +1,19 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import nl.rcomanne.telegrambotklootviool.command.*;
+import static nl.rcomanne.telegrambotklootviool.utility.CommandUtility.getCleanCommandName;
+
+import nl.rcomanne.telegrambotklootviool.command.MemeCommandService;
+import nl.rcomanne.telegrambotklootviool.command.PicCommandService;
+import nl.rcomanne.telegrambotklootviool.command.ProgrammerHumorCommandService;
+import nl.rcomanne.telegrambotklootviool.command.QuoteCommandService;
+import nl.rcomanne.telegrambotklootviool.command.SubredditCommandService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 
-import static nl.rcomanne.telegrambotklootviool.utility.CommandUtility.getCleanCommandName;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

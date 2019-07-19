@@ -28,13 +28,13 @@ public class ScrapeController {
     private final SubredditImageService imageService;
 
     @GetMapping("/{subreddit}/{window}")
-    public ResponseEntity scrapeSubreddit(@PathVariable("subreddit") String subreddit, @PathVariable("window") String window) {
+    public ResponseEntity<List<SubredditImage>> scrapeSubreddit(@PathVariable("subreddit") String subreddit, @PathVariable("window") String window) {
         log.debug("scraping subreddit {} for images", subreddit);
         return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, window));
     }
 
     @GetMapping("/{subreddit}")
-    public ResponseEntity scrapeSubredditDefault(@PathVariable("subreddit") String subreddit) {
+    public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit) {
         log.debug("scraping subreddit {} for images", subreddit);
         return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, DEF_WINDOW));
     }

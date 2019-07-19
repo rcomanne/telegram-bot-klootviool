@@ -1,11 +1,13 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.service.GoogleSearchService;
 import nl.rcomanne.telegrambotklootviool.service.MemeService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -20,7 +22,7 @@ public class PicCommandService extends AbstractCommandService {
     @Override
     public void handle(long chatId) {
         // we need input to search
-        sendPhotoWithCaption(chatId, memeService.getRandom().getImageLink(), "we need a query to search images!");
+        sendPhoto(chatId, memeService.getRandom().getImageLink(), "we need a query to search images!");
     }
 
     @Override

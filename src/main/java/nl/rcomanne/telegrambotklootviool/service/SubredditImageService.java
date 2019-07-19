@@ -2,7 +2,6 @@ package nl.rcomanne.telegrambotklootviool.service;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
@@ -78,12 +77,9 @@ public class SubredditImageService {
         }
     }
 
-    public List<String> scrapeAndSave(String subreddit, String window) {
+    public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         log.debug("scrape and save");
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, window);
-        repository.saveAll(images);
-        return images.parallelStream()
-                .map(SubredditImage::getId)
-                .collect(Collectors.toList());
+        return repository.saveAll(images);
     }
 }

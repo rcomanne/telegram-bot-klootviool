@@ -1,9 +1,10 @@
 package nl.rcomanne.telegrambotklootviool.web.dto;
 
-import lombok.Data;
+import java.util.UUID;
+
 import nl.rcomanne.telegrambotklootviool.domain.NsfwItem;
 
-import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class NsfwDto {
