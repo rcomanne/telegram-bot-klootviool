@@ -1,21 +1,4 @@
 logging:
   path: logs
   file: ${logging.path}/app.log
-  config:
-
-bot:
-  token: 870884763:AAFnCmicWosONkAtDo2grejctNiPgnDIq5Y
-  username: klootviool_bot
-
-spring:
-  data:
-    mongodb:
-      password: villagepeople
-
-imgur:
-  token: cd5ae9e788adac795dc181d741b1a3e434fc0077
-  clientId: Client-ID 2c05233ba17f295
-
-google:
-  key: AIzaSyCBEjFCK-MDfYvcbrLuLHalZP7yaClRxQY
-  cx: 002009818996837059114:6qq3frumwii
+  config: classpath:./logback-logtest.xml

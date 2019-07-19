@@ -1,3 +1,7 @@
 logging:
   path: /var/opt/services/logs
   file: ${logging.path}/telegram-bot-klootviool.log
+  config: classpath:./logback-server.xml
+
+server:
+  port: 8101
