@@ -1,6 +1,2 @@
 logging:
-  file: app.log
-
-spring:
-  config:
-    additional-location: file:./config/
+  file: /var/opt/services/log/telegram-bot-klootviool.log
