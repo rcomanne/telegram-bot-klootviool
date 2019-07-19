@@ -1,2 +1,3 @@
 logging:
-  file: /var/opt/services/log/telegram-bot-klootviool.log
+  path: /var/opt/services/logs
+  file: ${logging.path}/telegram-bot-klootviool.log
