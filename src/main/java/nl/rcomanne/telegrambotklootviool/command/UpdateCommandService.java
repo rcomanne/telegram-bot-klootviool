@@ -22,7 +22,6 @@ public class UpdateCommandService extends AbstractCommandService {
 
     private static final String DEF_WINDOW = "day";
 
-    private final ImgurSubredditScraper scraper;
     private final SubredditImageService service;
 
     private final Random r = new Random();
