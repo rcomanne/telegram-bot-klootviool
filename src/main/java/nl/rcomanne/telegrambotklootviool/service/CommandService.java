@@ -66,7 +66,7 @@ public class CommandService {
 
     public void processWithQuery(final long chatId, final MessageEntity entity, final String query) {
         String command = getCleanCommandName(entity, username);
-        log.debug("processing command {} with query", command);
+        log.debug("processing command {} with query {}", command, query);
         switch (command) {
             case "quote":
                 quoteCommandService.handle(chatId, query);
