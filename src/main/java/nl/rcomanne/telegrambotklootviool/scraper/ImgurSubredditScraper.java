@@ -89,6 +89,7 @@ public class ImgurSubredditScraper {
                 throw new IllegalStateException("expected correct response from subreddit");
             }
         } catch (Exception ex) {
+            log.warn("exception while retrieving items: {}", ex.getMessage(), ex);
             return null;
         }
     }

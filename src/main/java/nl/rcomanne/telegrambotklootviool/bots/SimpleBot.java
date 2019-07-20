@@ -28,7 +28,7 @@ public class SimpleBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.debug("processing update: {}", update);
+        log.debug("processing update: {}:{}", update.getUpdateId(), update.getMessage());
         if (update.hasInlineQuery()) {
             // we do not handle inline queries now
             return;
