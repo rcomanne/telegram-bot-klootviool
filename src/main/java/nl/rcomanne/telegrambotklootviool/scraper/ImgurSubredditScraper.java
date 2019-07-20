@@ -29,15 +29,19 @@ public class ImgurSubredditScraper {
     private final RestTemplate restTemplate;
 
     public List<SubredditImage> scrapeSubreddit(String subreddit, String window) {
-        log.info("scraping subreddit {} for winodw {}", subreddit, window);
+        log.info("scraping subreddit {} for window {}", subreddit, window);
         int page = 0;
         List<SubredditImage> images = new ArrayList<>();
         do {
             try {
                 ImgurSubredditResponse subredditResponse = retrieveItems(subreddit, page++, window);
                 if (subredditResponse == null) {
-                    log.warn("subreddit response is null");
-                    throw new IllegalStateException("expected correct response from subreddit");
+                    if (images.isEmpty()) {
+                        log.warn("received nothing from subreddit {}", subreddit);
+                        throw new IllegalStateException("expected correct response from subreddit");
+                    } else {
+                        return images;
+                    }
                 }
                 if (subredditResponse.getData().isEmpty()) {
                     // got empty page -- no more images
@@ -76,12 +80,16 @@ public class ImgurSubredditScraper {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, clientId);
         HttpEntity entity = new HttpEntity(headers);
-        ResponseEntity<ImgurSubredditResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, ImgurSubredditResponse.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            log.warn("received non 2xx status code {}", response.getStatusCodeValue());
-            throw new IllegalStateException("expected correct response from subreddit");
+        try {
+            ResponseEntity<ImgurSubredditResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, ImgurSubredditResponse.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                log.warn("received non 2xx status code {}", response.getStatusCodeValue());
+                throw new IllegalStateException("expected correct response from subreddit");
+            }
+        } catch (Exception ex) {
+            return null;
         }
     }
 }
