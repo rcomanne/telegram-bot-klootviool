@@ -1,12 +1,14 @@
 package nl.rcomanne.telegrambotklootviool.domain;
 
-import java.io.Serializable;
-
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.Serializable;
 
 @Builder
 @Data
+@Document(collection = "subreddit")
 public class SubredditImage implements Serializable {
     private String id;
     private String title;

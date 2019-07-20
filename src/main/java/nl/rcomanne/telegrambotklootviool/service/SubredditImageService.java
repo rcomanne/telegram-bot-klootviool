@@ -52,7 +52,7 @@ public class SubredditImageService {
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(matchStage, sampleStage);
 
-        return doFind(aggregation, subreddit);
+        return doFind(aggregation, cleanSubreddit);
     }
 
     public SubredditImage findBySubredditAndTitle(final String subreddit, final String title) {
@@ -65,15 +65,14 @@ public class SubredditImageService {
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(subredditMatch, titleMatch, sampleStage);
 
-        return doFind(aggregation, subreddit);
+        return doFind(aggregation, cleanSubreddit);
     }
 
     @Nullable
     private SubredditImage doFind(Aggregation aggregation, String subreddit) {
         List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_MATCH_KEY, SubredditImage.class).getMappedResults();
-
         if (!images.isEmpty()) {
-            log.debug("found images {} in {}", images.size(), subreddit);
+            log.debug("found images {}/{} in {}", images.size(), SAMPLE_SIZE, subreddit);
             return images.get(r.nextInt(images.size()));
         } else {
             log.debug("no images found, scraping and saving");
