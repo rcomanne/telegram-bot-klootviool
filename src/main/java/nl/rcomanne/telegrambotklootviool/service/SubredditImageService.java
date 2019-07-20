@@ -1,12 +1,10 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import java.util.List;
-import java.util.Random;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -14,8 +12,9 @@ import org.springframework.data.mongodb.core.aggregation.SampleOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -46,19 +45,22 @@ public class SubredditImageService {
         }
     }
 
-    public SubredditImage findRandomBySubreddit(String subreddit) {
-        log.debug("finding random image from {}", subreddit);
-        MatchOperation matchStage = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(subreddit));
+    public SubredditImage findRandomBySubreddit(final String subreddit) {
+        final String cleanSubreddit = subreddit.toLowerCase().trim();
+        log.debug("finding random image from {}", cleanSubreddit);
+        MatchOperation matchStage = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(cleanSubreddit));
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(matchStage, sampleStage);
 
         return doFind(aggregation, subreddit);
     }
 
-    public SubredditImage findBySubredditAndTitle(String subreddit, String title) {
-        log.debug("finding random image from {}", subreddit);
-        MatchOperation subredditMatch = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(subreddit));
-        String pattern = "/.*(" + title + ").*/gi";
+    public SubredditImage findBySubredditAndTitle(final String subreddit, final String title) {
+        final String cleanSubreddit = subreddit.toLowerCase().trim();
+        final String cleanTitle = title.toLowerCase().trim();
+        log.debug("finding random image from {} with title {}", cleanSubreddit, cleanTitle);
+        MatchOperation subredditMatch = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(cleanSubreddit));
+        String pattern = "/.*(" + cleanTitle + ").*/gi";
         MatchOperation titleMatch = Aggregation.match(new Criteria(TITLE_MATCH_KEY).regex(pattern));
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(subredditMatch, titleMatch, sampleStage);
@@ -66,20 +68,29 @@ public class SubredditImageService {
         return doFind(aggregation, subreddit);
     }
 
+    @Nullable
     private SubredditImage doFind(Aggregation aggregation, String subreddit) {
         List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_MATCH_KEY, SubredditImage.class).getMappedResults();
 
         if (!images.isEmpty()) {
+            log.debug("found images {} in {}", images.size(), subreddit);
             return images.get(r.nextInt(images.size()));
         } else {
-            images = repository.saveAll(scraper.scrapeSubreddit(subreddit, DEF_WINDOW));
-            return images.get(r.nextInt(images.size()));
+            log.debug("no images found, scraping and saving");
+            images = scrapeAndSave(subreddit, DEF_WINDOW);
+            if (images.isEmpty()) {
+                return null;
+            } else {
+                return images.get(r.nextInt(images.size()));
+            }
         }
     }
 
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         log.debug("scrape and save");
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, window);
-        return repository.saveAll(images);
+        log.debug("saving {} items for {}", images.size(), subreddit);
+        images = repository.saveAll(images);
+        return images;
     }
 }

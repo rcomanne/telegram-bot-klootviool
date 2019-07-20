@@ -1,12 +1,10 @@
 package nl.rcomanne.telegrambotklootviool.scraper;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponse;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponseItem;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -64,7 +62,7 @@ public class ImgurSubredditScraper {
                     .animated(item.isAnimated())
                     .nsfw(item.isNsfw())
                     .imageLink(item.getLink())
-                    .subreddit(item.getSection())
+                    .subreddit(item.getSection().toLowerCase())
                     .build());
         }
         return images;
