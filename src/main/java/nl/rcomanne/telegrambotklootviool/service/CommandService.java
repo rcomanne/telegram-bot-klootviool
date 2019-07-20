@@ -1,20 +1,13 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import static nl.rcomanne.telegrambotklootviool.utility.CommandUtility.getCleanCommandName;
-
-import nl.rcomanne.telegrambotklootviool.command.MemeCommandService;
-import nl.rcomanne.telegrambotklootviool.command.PicCommandService;
-import nl.rcomanne.telegrambotklootviool.command.ProgrammerHumorCommandService;
-import nl.rcomanne.telegrambotklootviool.command.QuoteCommandService;
-import nl.rcomanne.telegrambotklootviool.command.SubredditCommandService;
-import nl.rcomanne.telegrambotklootviool.command.UpdateCommandService;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.command.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static nl.rcomanne.telegrambotklootviool.utility.CommandUtility.getCleanCommandName;
 
 @Slf4j
 @Service
@@ -38,7 +31,7 @@ public class CommandService {
 
     public void process(final long chatId, final MessageEntity entity) {
         String command = getCleanCommandName(entity, username);
-        log.debug("processing command {}", command);
+        log.info("processing command {}", command);
         switch (command) {
             case "quote":
                 quoteCommandService.handle(chatId);
@@ -66,7 +59,7 @@ public class CommandService {
 
     public void processWithQuery(final long chatId, final MessageEntity entity, final String query) {
         String command = getCleanCommandName(entity, username);
-        log.debug("processing command {} with query {}", command, query);
+        log.info("processing command {} with query {}", command, query);
         switch (command) {
             case "quote":
                 quoteCommandService.handle(chatId, query);

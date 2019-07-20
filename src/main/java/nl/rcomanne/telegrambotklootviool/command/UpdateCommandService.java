@@ -1,17 +1,14 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import java.util.List;
-import java.util.Random;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -33,7 +30,6 @@ public class UpdateCommandService extends AbstractCommandService {
 
     @Override
     public void handle(long chatId, String query) {
-        log.debug("updating {}", query);
         List<SubredditImage> images = service.scrapeAndSave(query, DEF_WINDOW);
         if (images.isEmpty()) {
             sendMessage(chatId, "no images found for subreddit " + query);

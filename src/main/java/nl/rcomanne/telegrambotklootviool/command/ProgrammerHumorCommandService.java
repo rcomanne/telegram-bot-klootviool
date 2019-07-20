@@ -1,13 +1,11 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -22,20 +20,12 @@ public class ProgrammerHumorCommandService extends AbstractCommandService {
 
     public void handle(long chatId) {
         SubredditImage selected = service.findRandomBySubreddit(SUBREDDIT);
-        if (selected.isAnimated()) {
-            sendAnimation(chatId, selected.getImageLink());
-        } else {
-            sendPhoto(chatId, selected.getImageLink());
-        }
+        sendSubredditImage(chatId, selected);
     }
 
     public void handle(long chatId, String query) {
         SubredditImage selected = service.findBySubredditAndTitle(SUBREDDIT, query);
-        if (selected.getImageLink().contains(".gif")) {
-            sendAnimation(chatId, selected.getImageLink());
-        } else {
-            sendPhoto(chatId, selected.getImageLink());
-        }
+        sendSubredditImage(chatId, selected);
     }
 
     @Override

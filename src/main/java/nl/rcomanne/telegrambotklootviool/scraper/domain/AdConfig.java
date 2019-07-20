@@ -1,11 +1,11 @@
 package nl.rcomanne.telegrambotklootviool.scraper.domain;
 
-import java.util.List;
-
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class AdConfig {
+class AdConfig {
     private List<String> safeFlags;
     private List<String> highRiskFlags;
     private List<String> unsafeFlags;

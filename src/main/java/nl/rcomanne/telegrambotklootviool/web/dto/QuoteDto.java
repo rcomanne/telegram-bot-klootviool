@@ -1,10 +1,9 @@
 package nl.rcomanne.telegrambotklootviool.web.dto;
 
-import java.util.UUID;
-
+import lombok.Data;
 import nl.rcomanne.telegrambotklootviool.domain.Quote;
 
-import lombok.Data;
+import java.util.UUID;
 
 @Data
 public class QuoteDto {

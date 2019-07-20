@@ -29,6 +29,7 @@ public class ImgurSubredditScraper {
     private final RestTemplate restTemplate;
 
     public List<SubredditImage> scrapeSubreddit(String subreddit, String window) {
+        log.info("scraping subreddit {} for winodw {}", subreddit, window);
         int page = 0;
         List<SubredditImage> images = new ArrayList<>();
         do {
@@ -40,12 +41,13 @@ public class ImgurSubredditScraper {
                 }
                 if (subredditResponse.getData().isEmpty()) {
                     // got empty page -- no more images
+                    log.info("retrieved empty page, no more images available, returning {} images we have", images.size());
                     return images;
                 }
                 // adding all retrieved items to the list
                 images.addAll(convertItems(subredditResponse));
             } catch (IllegalStateException ex) {
-                log.debug("a request failed, return images we have now");
+                log.warn("a request failed, return images we have now");
                 return images;
             }
         } while (images.size() % 100 == 0);
@@ -70,7 +72,7 @@ public class ImgurSubredditScraper {
 
     private ImgurSubredditResponse retrieveItems(String subreddit, int page, String window) {
         final String url = baseUrl + "/" + subreddit + "/top" + "/" + window + "/" + page;
-        log.debug("scraping with url {}", url);
+        log.info("scraping with url {}", url);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, clientId);
         HttpEntity entity = new HttpEntity(headers);

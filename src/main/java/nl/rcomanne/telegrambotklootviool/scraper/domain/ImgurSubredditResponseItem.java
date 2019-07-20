@@ -1,10 +1,12 @@
 package nl.rcomanne.telegrambotklootviool.scraper.domain;
 
+import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 
-import lombok.Data;
-
 @Data
+@ToString(of = {"id", "title", "link", "section"})
 public class ImgurSubredditResponseItem {
     private String id;
     private String title;
@@ -26,7 +28,7 @@ public class ImgurSubredditResponseItem {
     private boolean isAd;
     private boolean inMostViral;
     private boolean hasSound;
-    private List<String> tags = null;
+    private List<String> tags;
     private long adType;
     private String adUrl;
     private long edited;

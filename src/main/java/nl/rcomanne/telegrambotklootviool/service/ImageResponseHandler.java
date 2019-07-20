@@ -1,8 +1,6 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import java.io.IOException;
-import java.util.Random;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -11,7 +9,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Random;
 
 @Slf4j
 public class ImageResponseHandler implements ResponseHandler<String> {
@@ -26,7 +25,7 @@ public class ImageResponseHandler implements ResponseHandler<String> {
 
             JSONArray array = new JSONObject(entityString).getJSONArray("items");
             final String selected = array.getJSONObject(new Random().nextInt(array.length())).getString("link");
-            log.info("selected image url: {}", selected);
+            log.debug("selected image url: {}", selected);
             return selected;
         } else {
             throw new ClientProtocolException("Unexpected response status: " + status);

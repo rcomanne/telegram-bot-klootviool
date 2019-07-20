@@ -1,12 +1,10 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -19,13 +17,11 @@ public class SubredditCommandService extends AbstractCommandService {
 
     @Override
     public void handle(long chatId) {
-        log.debug("handling subreddit command");
         sendSubredditImage(chatId, service.findRandom());
     }
 
     @Override
     public void handle(long chatId, String query) {
-        log.debug("handling subreddit command with {}", query);
         sendSubredditImage(chatId, service.findRandomBySubreddit(query));
     }
 

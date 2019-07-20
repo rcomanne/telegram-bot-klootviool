@@ -1,12 +1,10 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.Quote;
 import nl.rcomanne.telegrambotklootviool.service.QuoteService;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

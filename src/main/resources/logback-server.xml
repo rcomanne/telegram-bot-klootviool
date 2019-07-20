@@ -7,7 +7,14 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
 
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <shortenedLoggerNameLength>16</shortenedLoggerNameLength>
+            <customFields>
+                {
+                    "app": "telegram-bot-klootviool"
+                }
+            </customFields>
+        </encoder>
 
     </appender>
 
