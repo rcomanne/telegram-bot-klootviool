@@ -4,7 +4,7 @@
         <file>${LOG_FILE}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
@@ -18,11 +18,11 @@
 
     </appender>
 
-    <root level="INFO">
+    <root level="INFO" additivity="false">
         <appender-ref ref="file"/>
     </root>
 
-    <logger name="nl.rcomanne.telegrambotklootviool" level="DEBUG">
+    <logger name="nl.rcomanne.telegrambotklootviool" level="DEBUG" additivity="false">
         <appender-ref ref="file"/>
     </logger>
 </configuration>
