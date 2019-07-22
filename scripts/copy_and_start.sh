@@ -7,7 +7,7 @@ echo "removing old logback file"
 rm ${CONF_DIR}/logback.xml
 
 echo "copying new logback file"
-cp target/logback-server.xml ${CONF_DIR}/logback.xml
+cp target/classes/logback-server.xml ${CONF_DIR}/logback.xml
 
 echo "removing old jar"
 rm ${BASE_URL}/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar
