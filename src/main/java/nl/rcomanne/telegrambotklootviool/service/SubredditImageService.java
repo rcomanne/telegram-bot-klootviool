@@ -31,6 +31,8 @@ public class SubredditImageService {
     private static final String TITLE_MATCH_KEY = "title";
     private static final String DEF_WINDOW = "day";
 
+    private static final String GONEWILD_CLEAN_REGEX = "/(\\(|\\[)(\\s+)?m(ale)?(\\s+)?(\\)|\\])/gi";
+
     public SubredditImage findRandom() {
         log.info("finding random image");
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
@@ -88,6 +90,7 @@ public class SubredditImageService {
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         log.info("scrape and save");
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, window);
+        images.removeIf(SubredditImage::isMale);
         log.info("saving {} items for {}", images.size(), subreddit);
         images = repository.saveAll(images);
         return images;
