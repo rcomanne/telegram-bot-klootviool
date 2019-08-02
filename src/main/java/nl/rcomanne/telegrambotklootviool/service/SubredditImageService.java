@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class SubredditImageService {
-    private final ImgurSubredditScraper scraper;
+    private final ImgurSubredditScraper imgurScraper;
     private final DankMemesScraper dankMemesScraper;
     private final SubredditImageRepository repository;
     private final MongoTemplate template;
@@ -35,8 +35,6 @@ public class SubredditImageService {
     private static final String SUBREDDIT_MATCH_KEY = "subreddit";
     private static final String TITLE_MATCH_KEY = "title";
     private static final String DEF_WINDOW = "day";
-
-    private static final String GONEWILD_CLEAN_REGEX = "/(\\(|\\[)(\\s+)?m(ale)?(\\s+)?(\\)|\\])/gi";
 
     public SubredditImage findRandom() {
         log.info("finding random image");
@@ -93,8 +91,18 @@ public class SubredditImageService {
     }
 
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
+        // window is an old parameter used for the Imgur API, probably will not need it anymore
         log.info("scrape and save");
         List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(subreddit);
+        images.removeIf(SubredditImage::isMale);
+        log.info("saving {} items for {}", images.size(), subreddit);
+        images = repository.saveAll(images);
+        return images;
+    }
+
+    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit) {
+        log.info("scraping and saving {} for all time", subreddit);
+        List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all");
         images.removeIf(SubredditImage::isMale);
         log.info("saving {} items for {}", images.size(), subreddit);
         images = repository.saveAll(images);

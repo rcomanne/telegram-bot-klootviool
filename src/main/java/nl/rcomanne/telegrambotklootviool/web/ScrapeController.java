@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/scrape")
 @RequiredArgsConstructor
 public class ScrapeController {
-    private static final String DEF_WINDOW = "day";
 
     private final SubredditImageService imageService;
 
@@ -32,6 +31,6 @@ public class ScrapeController {
     @GetMapping("/{subreddit}")
     public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit) {
         log.info("scraping subreddit {} for images", subreddit);
-        return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, DEF_WINDOW));
+        return ResponseEntity.ok(imageService.scrapeAndSaveAllTime(subreddit));
     }
 }
