@@ -22,15 +22,15 @@ public class ScrapeController {
 
     private final SubredditImageService imageService;
 
-    @GetMapping("/{subreddit}/{window}")
-    public ResponseEntity<List<SubredditImage>> scrapeSubreddit(@PathVariable("subreddit") String subreddit, @PathVariable("window") String window) {
-        log.info("scraping subreddit {} for images", subreddit);
-        return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, window));
-    }
+//    @GetMapping("/{subreddit}/{window}")
+//    public ResponseEntity<List<SubredditImage>> scrapeSubreddit(@PathVariable("subreddit") String subreddit, @PathVariable("window") String window) {
+//        log.info("scraping subreddit {} for images", subreddit);
+//        return ResponseEntity.ok(imageService.scrapeAndSave(subreddit, window));
+//    }
 
-    @GetMapping("/{subreddit}")
-    public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit) {
+    @GetMapping("/{subreddit}/{startPage}")
+    public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit, @PathVariable("startPage") int startPage) {
         log.info("scraping subreddit {} for images", subreddit);
-        return ResponseEntity.ok(imageService.scrapeAndSaveAllTime(subreddit));
+        return ResponseEntity.ok(imageService.scrapeAndSaveAllTime(subreddit, startPage));
     }
 }

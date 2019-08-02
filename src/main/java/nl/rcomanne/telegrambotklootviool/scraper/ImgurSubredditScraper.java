@@ -31,9 +31,9 @@ public class ImgurSubredditScraper {
 
     private final RestTemplate restTemplate;
 
-    public List<SubredditImage> scrapeSubreddit(String subreddit, String window) {
+    public List<SubredditImage> scrapeSubreddit(String subreddit, String window, int startPage) {
         log.info("scraping subreddit {} for window {}", subreddit, window);
-        int page = 0;
+        int page = startPage;
         List<SubredditImage> images = new ArrayList<>();
         do {
             try {
@@ -46,14 +46,14 @@ public class ImgurSubredditScraper {
                         return images;
                     }
                 }
-                if (subredditResponse.getData().isEmpty()) {
+                if (subredditResponse.getData() == null || subredditResponse.getData().isEmpty()) {
                     // got empty page -- no more images
                     log.info("retrieved empty page, no more images available, returning {} images we have", images.size());
                     return images;
                 }
                 // adding all retrieved items to the list
                 images.addAll(convertItems(subredditResponse));
-            } catch (IllegalStateException ex) {
+            } catch (Exception ex) {
                 log.warn("a request failed, return images we have now");
                 return images;
             }
@@ -64,7 +64,7 @@ public class ImgurSubredditScraper {
     private List<SubredditImage> convertItems(ImgurSubredditResponse response) {
         List<SubredditImage> images = new ArrayList<>();
         for (ImgurSubredditResponseItem item : response.getData()) {
-            log.debug("converting item: {}", item);
+            log.trace("converting item: {}", item);
             images.add(SubredditImage.builder()
                     .id(item.getId())
                     .title(item.getTitle())
@@ -74,6 +74,7 @@ public class ImgurSubredditScraper {
                     .subreddit(item.getSection().toLowerCase())
                     .build());
         }
+        log.debug("converted {} items", images.size());
         return images;
     }
 

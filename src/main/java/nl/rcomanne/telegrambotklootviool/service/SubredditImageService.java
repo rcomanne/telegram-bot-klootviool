@@ -100,7 +100,7 @@ public class SubredditImageService {
         return images;
     }
 
-    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit) {
+    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit, int startPage) {
         log.info("scraping and saving {} for all time", subreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all");
         images.removeIf(SubredditImage::isMale);
