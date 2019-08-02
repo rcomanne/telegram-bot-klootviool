@@ -1,15 +1,17 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import nl.rcomanne.telegrambotklootviool.domain.Quote;
-import nl.rcomanne.telegrambotklootviool.repositories.QuoteRepository;
-import nl.rcomanne.telegrambotklootviool.web.dto.QuoteDto;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import nl.rcomanne.telegrambotklootviool.domain.Quote;
+import nl.rcomanne.telegrambotklootviool.repositories.QuoteRepository;
+import nl.rcomanne.telegrambotklootviool.web.dto.QuoteDto;
+
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

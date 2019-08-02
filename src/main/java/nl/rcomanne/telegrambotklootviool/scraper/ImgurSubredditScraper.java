@@ -1,20 +1,23 @@
 package nl.rcomanne.telegrambotklootviool.scraper;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponse;
 import nl.rcomanne.telegrambotklootviool.scraper.domain.ImgurSubredditResponseItem;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -78,6 +81,7 @@ public class ImgurSubredditScraper {
         final String url = baseUrl + "/" + subreddit + "/top" + "/" + window + "/" + page;
         log.info("scraping with url {}", url);
         HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add(HttpHeaders.AUTHORIZATION, clientId);
         HttpEntity entity = new HttpEntity(headers);
         try {
@@ -90,7 +94,7 @@ public class ImgurSubredditScraper {
             }
         } catch (Exception ex) {
             log.warn("exception while retrieving items: {}", ex.getMessage(), ex);
-            return null;
+            return new ImgurSubredditResponse();
         }
     }
 }

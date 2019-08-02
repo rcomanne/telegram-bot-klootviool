@@ -1,10 +1,15 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
+import nl.rcomanne.telegrambotklootviool.scraper.DankMemesScraper;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -12,15 +17,15 @@ import org.springframework.data.mongodb.core.aggregation.SampleOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubredditImageService {
     private final ImgurSubredditScraper scraper;
+    private final DankMemesScraper dankMemesScraper;
     private final SubredditImageRepository repository;
     private final MongoTemplate template;
 
@@ -89,7 +94,7 @@ public class SubredditImageService {
 
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         log.info("scrape and save");
-        List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, window);
+        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(subreddit);
         images.removeIf(SubredditImage::isMale);
         log.info("saving {} items for {}", images.size(), subreddit);
         images = repository.saveAll(images);

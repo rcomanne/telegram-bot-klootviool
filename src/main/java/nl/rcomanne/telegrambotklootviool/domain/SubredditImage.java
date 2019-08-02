@@ -1,15 +1,18 @@
 package nl.rcomanne.telegrambotklootviool.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import java.io.Serializable;
+
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
+import lombok.Builder;
+import lombok.Data;
 
 @Builder
 @Data
 @Document(collection = "subreddit")
 public class SubredditImage implements Serializable {
+    @Transient
     private static final String NSFW_REGEX = "/(\\(|\\[)(\\s+)?m(ale)?(\\s+)?(\\)|\\])/gi";
 
     private String id;

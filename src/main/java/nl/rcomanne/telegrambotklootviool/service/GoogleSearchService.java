@@ -1,13 +1,14 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

@@ -1,9 +1,9 @@
 package nl.rcomanne.telegrambotklootviool.scraper.domain;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.ToString;
-
-import java.util.List;
 
 @Data
 @ToString(of = {"id", "title", "link", "section"})

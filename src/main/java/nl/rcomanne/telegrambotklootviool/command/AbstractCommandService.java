@@ -1,7 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.ApiContext;
@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractCommandService extends DefaultAbsSender {

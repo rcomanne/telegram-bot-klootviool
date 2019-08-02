@@ -1,7 +1,8 @@
 package nl.rcomanne.telegrambotklootviool.utility;
 
-import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CommandUtility {
