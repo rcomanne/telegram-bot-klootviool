@@ -17,4 +17,4 @@ imgur:
     subreddit: ${imgur.url.base}/gallery/r
 
 dankmemes:
-  url: http://dankmemes.io/api/images/{subreddit}
+  url: https://dankmemes.io/api/images/{subreddit}
