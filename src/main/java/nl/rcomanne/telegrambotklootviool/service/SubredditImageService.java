@@ -92,10 +92,11 @@ public class SubredditImageService {
 
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         // window is an old parameter used for the Imgur API, probably will not need it anymore
-        log.info("scrape and save");
-        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(subreddit);
+        final String cleanSubreddit = subreddit.toLowerCase().trim();
+        log.info("scrape and save for {}", cleanSubreddit);
+        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
         images.removeIf(SubredditImage::isMale);
-        log.info("saving {} items for {}", images.size(), subreddit);
+        log.info("saving {} items for {}", images.size(), cleanSubreddit);
         images = repository.saveAll(images);
         return images;
     }

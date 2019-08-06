@@ -30,14 +30,15 @@ public class DankMemesScraper {
     private final RestTemplate restTemplate;
 
     public List<SubredditImage> scrapeDankMemes(String subreddit) {
-        log.info("scraping subreddit {} from dankmemes API", subreddit);
+        final String cleanSubreddit = subreddit.toLowerCase().trim();
+        log.info("scraping subreddit {} from dankmemes API", cleanSubreddit);
 
         try {
             List<DankMemesReponseItem> reponse = retrieveItems(subreddit);
             if (reponse != null && !reponse.isEmpty()) {
 
                 return reponse.parallelStream()
-                    .map(item -> item.toSubredditImage(subreddit))
+                    .map(item -> item.toSubredditImage(cleanSubreddit))
                     .collect(Collectors.toList());
             }
         } catch (Exception ex) {
