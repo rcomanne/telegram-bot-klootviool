@@ -46,6 +46,7 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
             execute(sendMessage);
         } catch (TelegramApiException ex) {
             log.warn("unable to sendMessage {}", ex.getMessage(), ex);
+            sendError(sendMessage.getChatId(), ex);
         }
     }
 
@@ -69,6 +70,7 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
             execute(sendAnimation);
         } catch (TelegramApiException ex) {
             log.warn("failed to sendAnimation {}", ex.getMessage(), ex);
+            sendError(sendAnimation.getChatId(), ex);
         }
     }
 
@@ -92,7 +94,16 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
             execute(sendPhoto);
         } catch (TelegramApiException ex) {
             log.warn("unable to sendPhoto {}", ex.getMessage(), ex);
+            sendError(sendPhoto.getChatId(), ex);
         }
+    }
+
+    void sendError(final String chatId, final Exception exception) {
+        SendMessage sendMessage = new SendMessage()
+            .setChatId(chatId)
+            .setText(exception.getMessage());
+
+        doSendMessage(sendMessage);
     }
 
 }
