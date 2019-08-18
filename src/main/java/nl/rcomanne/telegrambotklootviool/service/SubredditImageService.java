@@ -1,15 +1,11 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.DankMemesScraper;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -17,8 +13,9 @@ import org.springframework.data.mongodb.core.aggregation.SampleOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -94,7 +91,9 @@ public class SubredditImageService {
         // window is an old parameter used for the Imgur API, probably will not need it anymore
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("scrape and save for {}", cleanSubreddit);
-        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
+        // DankMemes.io is offline
+//        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
+        List<SubredditImage> images = imgurScraper.scrapeSubreddit(cleanSubreddit, window, 0);
         images.removeIf(SubredditImage::isMale);
         log.info("saving {} items for {}", images.size(), cleanSubreddit);
         images = repository.saveAll(images);

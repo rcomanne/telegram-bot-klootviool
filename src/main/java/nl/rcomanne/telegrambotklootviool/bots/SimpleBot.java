@@ -1,9 +1,8 @@
 package nl.rcomanne.telegrambotklootviool.bots;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.service.CommandService;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -12,8 +11,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -69,8 +67,6 @@ public class SimpleBot extends TelegramLongPollingBot {
     @Override
     public void onUpdatesReceived(List<Update> updates) {
         log.debug("received {} updates", updates.size());
-        for (Update update : updates) {
-            onUpdateReceived(update);
-        }
+        updates.parallelStream().forEach(this::onUpdateReceived);
     }
 }
