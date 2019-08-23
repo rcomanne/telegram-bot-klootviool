@@ -9,13 +9,14 @@ import java.time.Duration;
 
 @Configuration
 public class RestConfiguration {
-    private static final long DEFAULT_TIMEOUT = 3;
+    private static final long CONNECT_TIMEOUT = 5;
+    private static final long READ_TIMEOUT = 10;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
-                .setConnectTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT))
-                .setReadTimeout(Duration.ofSeconds(DEFAULT_TIMEOUT))
+                .setConnectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT))
+                .setReadTimeout(Duration.ofSeconds(READ_TIMEOUT))
                 .build();
     }
 }

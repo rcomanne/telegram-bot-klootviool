@@ -3,6 +3,7 @@ package nl.rcomanne.telegrambotklootviool.command;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class SubredditCommandService extends AbstractCommandService {
         sendSubredditImage(chatId, service.findRandom());
     }
 
+    @Async
     @Override
     public void handle(long chatId, String query) {
         sendSubredditImage(chatId, service.findRandomBySubreddit(query));

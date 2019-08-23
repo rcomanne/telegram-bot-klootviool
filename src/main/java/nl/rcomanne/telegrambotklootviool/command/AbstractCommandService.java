@@ -2,6 +2,7 @@ package nl.rcomanne.telegrambotklootviool.command;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 
+import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.ApiContext;
@@ -18,8 +19,10 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
         super(ApiContext.getInstance(DefaultBotOptions.class));
     }
 
+    @Async
     public abstract void handle(final long chatId);
 
+    @Async
     public abstract void handle(final long chatId, String query);
 
     void sendSubredditImage(final long chatId, final SubredditImage image) {

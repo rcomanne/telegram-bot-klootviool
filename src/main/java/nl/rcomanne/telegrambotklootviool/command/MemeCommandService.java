@@ -4,6 +4,7 @@ import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class MemeCommandService extends AbstractCommandService {
         }
     }
 
+    @Async
     @Override
     public void handle(long chatId, String query) {
         SubredditImage selected = service.findBySubredditAndTitle(SUBREDDIT_NAME, query);

@@ -7,6 +7,7 @@ import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class UpdateCommandService extends AbstractCommandService {
         sendMessage(chatId, "we need a subreddit name to update!");
     }
 
+    @Async
     @Override
     public void handle(long chatId, String query) {
         List<SubredditImage> images = service.scrapeAndSave(query, DEF_WINDOW);

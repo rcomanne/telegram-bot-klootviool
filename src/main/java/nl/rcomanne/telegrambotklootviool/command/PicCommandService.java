@@ -4,6 +4,7 @@ import nl.rcomanne.telegrambotklootviool.service.GoogleSearchService;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class PicCommandService extends AbstractCommandService {
         sendSubredditImage(chatId, service.findRandomBySubreddit(DEF_SUBREDDIT));
     }
 
+    @Async
     @Override
     public void handle(long chatId, String query) {
         sendPhoto(chatId, googleSearchService.searchImageNSFW(query));
