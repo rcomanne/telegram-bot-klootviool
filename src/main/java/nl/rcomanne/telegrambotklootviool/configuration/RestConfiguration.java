@@ -9,8 +9,8 @@ import java.time.Duration;
 
 @Configuration
 public class RestConfiguration {
-    private static final long CONNECT_TIMEOUT = 5;
-    private static final long READ_TIMEOUT = 10;
+    private static final long CONNECT_TIMEOUT = 3;
+    private static final long READ_TIMEOUT = 30;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
