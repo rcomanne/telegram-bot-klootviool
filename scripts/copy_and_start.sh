@@ -20,3 +20,5 @@ cp target/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar ${BASE_DIR}/
 
 echo "restarting the service"
 sudo systemctl restart telegram-bot-klootviool.service
+
+curl -XPOST 'localhost:8101/message/-320932775/deployed_new_version'
