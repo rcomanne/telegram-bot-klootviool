@@ -21,7 +21,7 @@ public class MessageController {
     @PostMapping("/{chatId}/{message}")
     public ResponseEntity sendMessage(@PathVariable("chatId") String chatId, @PathVariable("message") String message) {
         log.info("sending message");
-        service.sendMessage(chatId, message);
+        service.sendMessageRandomPhoto(chatId, message);
         return ResponseEntity.ok().build();
     }
 }

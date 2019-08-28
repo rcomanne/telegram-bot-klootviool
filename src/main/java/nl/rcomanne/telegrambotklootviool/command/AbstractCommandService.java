@@ -48,7 +48,7 @@ public abstract class AbstractCommandService extends DefaultAbsSender {
         try {
             execute(sendMessage);
         } catch (TelegramApiException ex) {
-            log.warn("unable to sendMessage {}", ex.getMessage(), ex);
+            log.warn("unable to sendMessageRandomPhoto {}", ex.getMessage(), ex);
             sendError(sendMessage.getChatId(), ex);
         }
     }

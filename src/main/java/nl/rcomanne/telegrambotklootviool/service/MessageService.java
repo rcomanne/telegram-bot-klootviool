@@ -31,9 +31,13 @@ public class MessageService extends DefaultAbsSender {
         return token;
     }
 
-    public void sendMessage(String chatId, String message) {
+    public void sendMessageRandomPhoto(String chatId, String message) {
         log.info("sending message to {}", chatId);
         SubredditImage image = imageService.findRandom();
+        sendMessageWithPhoto(chatId, message, image);
+    }
+
+    public void sendMessageWithPhoto(String chatId, String message, SubredditImage image) {
         SendPhoto sendPhoto = new SendPhoto()
             .setPhoto(image.getImageLink())
             .setChatId(chatId)
@@ -41,7 +45,7 @@ public class MessageService extends DefaultAbsSender {
         try {
             execute(sendPhoto);
         } catch (TelegramApiException ex) {
-            log.warn("unable to sendMessage {}", ex.getMessage(), ex);
+            log.warn("unable to sendMessageRandomPhoto {}", ex.getMessage(), ex);
         }
     }
 }
