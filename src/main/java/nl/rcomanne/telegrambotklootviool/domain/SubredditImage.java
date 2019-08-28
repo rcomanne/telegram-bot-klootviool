@@ -21,7 +21,7 @@ public class SubredditImage implements Serializable {
     private boolean animated;
     private boolean nsfw;
     private String imageLink;
-    private long score = 0;
+    private long score;
 
     public boolean isMale() {
         return (title.matches(NSFW_REGEX));
