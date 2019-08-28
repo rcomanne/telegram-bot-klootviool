@@ -25,13 +25,13 @@ public class ScheduledTasks {
     private final MessageService messageService;
     private final SubredditImageService imageService;
 
-    @Scheduled(cron = "* 0/15 * * * *")
+    @Scheduled(cron = "0 0/15 * * * *")
     public void sendDailyMessage() {
         log.info("sending CRON message, should be once every 15mins");
         messageService.sendMessageRandomPhoto(CHAT_ID, "surprise!");
     }
 
-    @Scheduled(cron = "* 20 * * * *")
+    @Scheduled(cron = "0 0 20 * * *")
     public void updateSubreddits() {
         log.info("updating subreddits");
         List<String> subreddits = List.of("memes", "programmerhumor", "gonewild", "vsmodels", "realgirls", "biggerthanyouthought", "ik_ihe", "me_irl");

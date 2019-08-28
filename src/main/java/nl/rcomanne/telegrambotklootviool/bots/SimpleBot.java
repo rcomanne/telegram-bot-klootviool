@@ -1,30 +1,39 @@
 package nl.rcomanne.telegrambotklootviool.bots;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import nl.rcomanne.telegrambotklootviool.service.CommandService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.generics.BotOptions;
+import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-@RequiredArgsConstructor
-public class SimpleBot extends TelegramLongPollingBot {
+public class SimpleBot implements LongPollingBot {
     @Value("${bot.token}")
     private String token;
 
     @Value("${bot.username}")
     private String username;
 
+    private final BotOptions options;
     private final CommandService commandService;
+
+    public SimpleBot(final CommandService commandService) {
+        this.commandService = commandService;
+        this.options = new DefaultBotOptions();
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -68,5 +77,15 @@ public class SimpleBot extends TelegramLongPollingBot {
     public void onUpdatesReceived(List<Update> updates) {
         log.debug("received {} updates", updates.size());
         updates.parallelStream().forEach(this::onUpdateReceived);
+    }
+
+    @Override
+    public BotOptions getOptions() {
+        return this.options;
+    }
+
+    @Override
+    public void clearWebhook() throws TelegramApiRequestException {
+        // do nothing -- no webhook
     }
 }
