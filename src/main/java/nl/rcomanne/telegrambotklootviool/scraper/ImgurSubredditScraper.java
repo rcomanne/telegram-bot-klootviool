@@ -72,6 +72,7 @@ public class ImgurSubredditScraper {
                     .nsfw(item.isNsfw())
                     .imageLink(item.getLink())
                     .subreddit(item.getSection().toLowerCase())
+                    .score(item.getScore())
                     .build());
         }
         log.debug("converted {} items", images.size());
