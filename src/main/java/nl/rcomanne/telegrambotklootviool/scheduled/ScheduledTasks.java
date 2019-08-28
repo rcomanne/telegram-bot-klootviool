@@ -25,7 +25,7 @@ public class ScheduledTasks {
     private final MessageService messageService;
     private final SubredditImageService imageService;
 
-    @Scheduled(cron = "0 0 8-24 * * *")
+    @Scheduled(cron = "0 0 8-23 * * *")
     public void sendRandomPhoto() {
         log.info("sending random photo");
         messageService.sendRandomPhoto(CHAT_ID);
