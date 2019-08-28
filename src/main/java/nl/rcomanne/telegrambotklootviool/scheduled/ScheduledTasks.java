@@ -16,7 +16,7 @@ public class ScheduledTasks {
 
     private final MessageService messageService;
 
-    @Scheduled(cron = "*/15 * * * *")
+    @Scheduled(cron = "* 0/15 * * * *")
     public void sendDailyMessage() {
         messageService.sendMessage(CHAT_ID, "goedemorgen thirsty bois");
     }
