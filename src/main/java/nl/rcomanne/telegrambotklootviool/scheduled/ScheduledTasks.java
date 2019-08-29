@@ -7,6 +7,7 @@ import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.MessageService;
 import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +19,31 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ScheduledTasks {
     private static final String CHAT_ID = "-320932775";
+    private static final String ME_CHAT_ID = "620393195";
     private static final String DEFAULT_WINDOW = "day";
+
+    @Value("#{'${subreddit.list}'.split(',')}")
+    private List<String> subreddits;
 
     private final Random random = new Random();
 
     private final MessageService messageService;
     private final SubredditImageService imageService;
 
-    @Scheduled(cron = "0 0 8-23 * * *")
+    @Scheduled(cron = "0 0 * * * *")
+    public void testUpdateTime() {
+        log.info("testing update timing for imgur");
+        List<SubredditImage> images = imageService.scrapeAndSave("me_irl", DEFAULT_WINDOW);
+        if (images.isEmpty()) {
+            log.info("no images found with test update");
+            messageService.sendRandomPhoto(ME_CHAT_ID);
+        } else {
+            final int size = images.size();
+            messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for me_irl", size), images.get(random.nextInt(size)));
+        }
+    }
+
+    @Scheduled(cron = "0 0,30 8-23 * * *")
     public void sendRandomPhoto() {
         log.info("sending random photo");
         messageService.sendRandomPhoto(CHAT_ID);
@@ -34,7 +52,6 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 4 * * *")
     public void updateSubreddits() {
         log.info("scheduled updating subreddits");
-        List<String> subreddits = List.of("memes", "programmerhumor", "gonewild", "vsmodels", "realgirls", "biggerthanyouthought", "ik_ihe", "me_irl");
         for (String subreddit : subreddits) {
             List<SubredditImage> images = imageService.scrapeAndSave(subreddit, DEFAULT_WINDOW);
             if (images.isEmpty()) {
@@ -43,7 +60,7 @@ public class ScheduledTasks {
             } else {
                 log.info("updated subreddit {} with {} images", subreddit, images);
                 final int size = images.size();
-                messageService.sendMessageWithPhoto(CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(1 + size)));
+                messageService.sendMessageWithPhoto(CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(size)));
             }
         }
     }

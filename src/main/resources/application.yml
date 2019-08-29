@@ -11,6 +11,9 @@ spring:
 bot:
   username: klootviool
 
+subreddit:
+  list: memes,programmerhumor,gonewild,vsmodels,goddesses,realgirls,biggerthanyouthought,ik_ihe,me_irl
+
 imgur:
   url:
     base: https://api.imgur.com/3
