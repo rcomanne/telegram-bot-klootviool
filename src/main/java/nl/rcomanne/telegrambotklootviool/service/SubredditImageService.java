@@ -1,11 +1,15 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
+import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.DankMemesScraper;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
+
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -16,6 +20,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -32,6 +39,9 @@ public class SubredditImageService {
     private static final String SUBREDDIT_MATCH_KEY = "subreddit";
     private static final String TITLE_MATCH_KEY = "title";
     private static final String DEF_WINDOW = "day";
+
+    private static final String GENDER_REGEX = "(?:\\(|\\[|\\{).*?([Ff]{1}|[mM]{1}|[tT]{1}).*?(?:\\)|\\]|\\})";
+    private static final Pattern GENDER_PATTERN = Pattern.compile(GENDER_REGEX);
 
     public SubredditImage findRandom() {
         log.info("finding random image");
@@ -94,7 +104,7 @@ public class SubredditImageService {
         // DankMemes.io is offline
 //        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(cleanSubreddit, window, 0);
-        images.removeIf(SubredditImage::isMale);
+        cleanList(images);
         log.info("saving {} items for {}", images.size(), cleanSubreddit);
         images = repository.saveAll(images);
         return images;
@@ -103,7 +113,7 @@ public class SubredditImageService {
     public List<SubredditImage> scrapeAndSaveAllTime(String subreddit, int startPage) {
         log.info("scraping and saving {} for all time", subreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage);
-        images.removeIf(SubredditImage::isMale);
+        cleanList(images);
         log.info("saving {} items for {}", images.size(), subreddit);
         images = repository.saveAll(images);
         return images;
