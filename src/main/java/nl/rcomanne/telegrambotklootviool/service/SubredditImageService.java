@@ -2,14 +2,15 @@ package nl.rcomanne.telegrambotklootviool.service;
 
 import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
-import nl.rcomanne.telegrambotklootviool.scraper.DankMemesScraper;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
 
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -17,19 +18,14 @@ import org.springframework.data.mongodb.core.aggregation.SampleOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubredditImageService {
     private final ImgurSubredditScraper imgurScraper;
-    private final DankMemesScraper dankMemesScraper;
     private final SubredditImageRepository repository;
     private final MongoTemplate template;
 
@@ -95,30 +91,29 @@ public class SubredditImageService {
     }
 
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
-        // window is an old parameter used for the Imgur API, probably will not need it anymore
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("scrape and save for {}", cleanSubreddit);
-        // DankMemes.io is offline
-//        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(cleanSubreddit, window, 0);
-        log.info("saving {} items for {}", images.size(), cleanSubreddit);
-        images = repository.saveAll(images);
-        return images;
+        return cleandAndSave(images, subreddit);
     }
 
     public List<SubredditImage> scrapeAndSaveAllTime(String subreddit, int startPage) {
         log.info("scraping and saving {} for all time", subreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage);
-        log.info("saving {} items for {}", images.size(), subreddit);
-        images = repository.saveAll(images);
-        return images;
+        return cleandAndSave(images, subreddit);
     }
 
     public List<SubredditImage> scrapeAndSaveTop(String subreddit, int startPage, int endPage) {
         log.info("scraping and saving from subreddit '{}' all time, from page '{}' to '{}'", subreddit, startPage, endPage);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage, endPage);
-        log.info("saving {} items from subreddit '{}'", images.size(), subreddit);
-        images = repository.saveAll(images);
+        return cleandAndSave(images, subreddit);
+    }
+
+    private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final String subreddit) {
+        log.info("saving {} items for {}", images.size(), subreddit);
+        List<SubredditImage> cleanList = cleanList(images);
+        images = repository.saveAll(cleanList);
+        log.info("saved {} items from subreddit {}", cleanList.size(), subreddit);
         return images;
     }
 }

@@ -30,6 +30,7 @@ public class ScheduledTasks {
     private final MessageService messageService;
     private final SubredditImageService imageService;
 
+/*
     @Scheduled(cron = "0 0 * * * *")
     public void testUpdateTime() {
         log.info("testing update timing for imgur");
@@ -39,11 +40,12 @@ public class ScheduledTasks {
             messageService.sendRandomPhoto(ME_CHAT_ID);
         } else {
             final int size = images.size();
-            messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for me_irl", size), images.get(random.nextInt(size)));
+            messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for me_irl", size), images.get(random.nextInt(size - 1)));
         }
     }
+*/
 
-    @Scheduled(cron = "0 0,30 8-23 * * *")
+    @Scheduled(cron = "0 0 8/2 * * *")
     public void sendRandomPhoto() {
         log.info("sending random photo");
         messageService.sendRandomPhoto(CHAT_ID);
@@ -56,11 +58,11 @@ public class ScheduledTasks {
             List<SubredditImage> images = imageService.scrapeAndSave(subreddit, DEFAULT_WINDOW);
             if (images.isEmpty()) {
                 log.info("no images found for subreddit {} while updating", subreddit);
-                messageService.sendMessageRandomPhoto(CHAT_ID, String.format("no images found for subreddit %s", subreddit));
+                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found for subreddit %s", subreddit));
             } else {
                 log.info("updated subreddit {} with {} images", subreddit, images);
                 final int size = images.size();
-                messageService.sendMessageWithPhoto(CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(size)));
+                messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(size - 1)));
             }
         }
     }
