@@ -40,9 +40,6 @@ public class SubredditImageService {
     private static final String TITLE_MATCH_KEY = "title";
     private static final String DEF_WINDOW = "day";
 
-    private static final String GENDER_REGEX = "(?:\\(|\\[|\\{).*?([Ff]{1}|[mM]{1}|[tT]{1}).*?(?:\\)|\\]|\\})";
-    private static final Pattern GENDER_PATTERN = Pattern.compile(GENDER_REGEX);
-
     public SubredditImage findRandom() {
         log.info("finding random image");
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
@@ -104,7 +101,6 @@ public class SubredditImageService {
         // DankMemes.io is offline
 //        List<SubredditImage> images = dankMemesScraper.scrapeDankMemes(cleanSubreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(cleanSubreddit, window, 0);
-        cleanList(images);
         log.info("saving {} items for {}", images.size(), cleanSubreddit);
         images = repository.saveAll(images);
         return images;
@@ -113,8 +109,15 @@ public class SubredditImageService {
     public List<SubredditImage> scrapeAndSaveAllTime(String subreddit, int startPage) {
         log.info("scraping and saving {} for all time", subreddit);
         List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage);
-        cleanList(images);
         log.info("saving {} items for {}", images.size(), subreddit);
+        images = repository.saveAll(images);
+        return images;
+    }
+
+    public List<SubredditImage> scrapeAndSaveTop(String subreddit, int startPage, int endPage) {
+        log.info("scraping and saving from subreddit '{}' all time, from page '{}' to '{}'", subreddit, startPage, endPage);
+        List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage, endPage);
+        log.info("saving {} items from subreddit '{}'", images.size(), subreddit);
         images = repository.saveAll(images);
         return images;
     }
