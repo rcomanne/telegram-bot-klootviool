@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.ImgurSubredditScraper;
+import nl.rcomanne.telegrambotklootviool.scraper.reddit.RedditSubredditScraper;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SubredditImageService {
     private final ImgurSubredditScraper imgurScraper;
+    private final RedditSubredditScraper redditScraper;
     private final SubredditImageRepository repository;
     private final MongoTemplate template;
 
@@ -93,19 +95,13 @@ public class SubredditImageService {
     public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("scrape and save for {}", cleanSubreddit);
-        List<SubredditImage> images = imgurScraper.scrapeSubreddit(cleanSubreddit, window, 0);
+        List<SubredditImage> images = redditScraper.scrapeSubreddit(cleanSubreddit, window);
         return cleandAndSave(images, subreddit);
     }
 
-    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit, int startPage) {
+    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit) {
         log.info("scraping and saving {} for all time", subreddit);
-        List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage);
-        return cleandAndSave(images, subreddit);
-    }
-
-    public List<SubredditImage> scrapeAndSaveTop(String subreddit, int startPage, int endPage) {
-        log.info("scraping and saving from subreddit '{}' all time, from page '{}' to '{}'", subreddit, startPage, endPage);
-        List<SubredditImage> images = imgurScraper.scrapeSubreddit(subreddit, "all", startPage, endPage);
+        List<SubredditImage> images = redditScraper.scrapeSubreddit(subreddit, "all");
         return cleandAndSave(images, subreddit);
     }
 

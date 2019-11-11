@@ -14,6 +14,12 @@ bot:
 subreddit:
   list: memes,programmerhumor,gonewild,vsmodels,goddesses,realgirls,biggerthanyouthought,happyembarrasedgirls,ik_ihe,me_irl
 
+reddit:
+  url:
+    base: https://www.reddit.com/
+    topAfter: ${fpx.reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&after={after}
+    topBefore: ${fpx.reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&before={before}
+
 imgur:
   url:
     base: https://api.imgur.com/3

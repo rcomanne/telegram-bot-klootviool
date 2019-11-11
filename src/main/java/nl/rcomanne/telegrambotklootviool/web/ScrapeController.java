@@ -23,14 +23,8 @@ public class ScrapeController {
     private final SubredditImageService imageService;
 
     @GetMapping("/{subreddit}/{startPage}")
-    public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit, @PathVariable("startPage") int startPage) {
+    public ResponseEntity<List<SubredditImage>> scrapeSubredditDefault(@PathVariable("subreddit") String subreddit) {
         log.info("scraping subreddit {} for images", subreddit);
-        return ResponseEntity.ok(imageService.scrapeAndSaveAllTime(subreddit, startPage));
-    }
-
-    @GetMapping("{subreddit}")
-    public ResponseEntity<List<SubredditImage>> scrapeTop(@PathVariable("subreddit") String subreddit) {
-        log.info("scraping top for {}", subreddit);
-        return ResponseEntity.ok(imageService.scrapeAndSaveTop(subreddit, 0 ,100));
+        return ResponseEntity.ok(imageService.scrapeAndSaveAllTime(subreddit));
     }
 }
