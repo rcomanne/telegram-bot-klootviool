@@ -13,17 +13,19 @@ public class Child {
     private ChildData data;
 
     public boolean isAnimated() {
-        boolean animated = false;
-
         if (data != null && data.getMedia() != null && data.getMedia().getOembed() != null) {
-            if (data.getMedia().getOembed().getType().equalsIgnoreCase("video"))  {
-                animated = true;
+            if (data.getUrl().contains(".gif")) {
+                return true;
             }
-            if (data.getMedia().getOembed().getType().equalsIgnoreCase("gif")) {
-                animated = true;
+
+            if (data.getMedia() != null && data.getMedia().getOembed() != null) {
+                String type = data.getMedia().getOembed().getType();
+                if (type.equalsIgnoreCase("video") || type.equalsIgnoreCase("gif"))  {
+                    return true;
+                }
             }
         }
-        return animated;
+        return false;
     }
 
     public String getSource() {
