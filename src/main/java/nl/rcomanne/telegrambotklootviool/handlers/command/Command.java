@@ -108,7 +108,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
                 .setText(message + "\n" + image.getTitle() + "\n" + image.getImageLink());
             send(sendMessage);
         } else {
-            log.debug("sending photo '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
+            log.debug("sending image '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendPhoto photo = new SendPhoto().setChatId(this.chatId)
                 .setPhoto(image.getImageLink())
                 .setCaption(message);
@@ -117,7 +117,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     private void handleError(Exception exception) {
-        log.debug("handling error with item... {}", exception.getMessage(), exception);
+        log.warn("handling error with item... {}", exception.getMessage(), exception);
         try {
             SendMessage sendMessage = new SendMessage().setChatId(this.chatId)
                 .setText("An exception occured: " + exception.getMessage());

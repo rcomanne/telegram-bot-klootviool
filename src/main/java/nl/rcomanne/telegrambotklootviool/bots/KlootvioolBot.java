@@ -48,12 +48,10 @@ public class KlootvioolBot implements LongPollingBot {
             log.info("received command {}", message);
             List<MessageEntity> entities = update.getMessage().getEntities();
             if (message.contains(" ")) {
-                log.info("handling command with query");
                 for (MessageEntity entity : entities) {
                     commandService.handleWithQuery(entity, chatId, message.substring(message.indexOf(' ') + 1));
                 }
             } else {
-                log.info("handling command without query");
                 for (MessageEntity entity : entities) {
                     commandService.handle(entity, chatId);
                 }

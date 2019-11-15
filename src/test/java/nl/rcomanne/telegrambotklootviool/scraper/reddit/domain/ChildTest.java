@@ -84,6 +84,37 @@ public class ChildTest {
         ChildData childData = new ChildData();
         Media media = new Media();
         childData.setMedia(media);
+        child.setData(childData);
         assertFalse(child.isAnimated());
+    }
+
+    @Test
+    public void sourceReddit() {
+        ChildData childData = new ChildData();
+        childData.setUrl("https://v.redd.it/3vgmpzevc2c21");
+        child.setData(childData);
+        assertEquals("reddit", child.getSource());
+
+        childData.setUrl("https://v.reddit.com/3vgmpzevc2c21");
+        child.setData(childData);
+        assertEquals("reddit", child.getSource());
+    }
+
+    @Test
+    public void sourceGfycat() {
+        Media media = new Media();
+        media.setType("gfycat.com");
+
+        ChildData childData = new ChildData();
+        childData.setUrl("gfycat.com");
+        childData.setMedia(media);
+
+        child.setData(childData);
+        assertEquals("gfycat.com", child.getSource());
+    }
+
+    @Test
+    public void sourceUnknown() {
+        assertEquals("unknown", child.getSource());
     }
 }
