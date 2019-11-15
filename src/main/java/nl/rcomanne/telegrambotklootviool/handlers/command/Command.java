@@ -16,13 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 public abstract class Command extends DefaultAbsSender implements Runnable {
-    private final String botToken;
-
-    final CommandType type;
 
     long chatId;
 
     String query;
+
+    final CommandType type;
+
+    private final String botToken;
 
     public Command(final CommandType type, final String botToken) {
         super(ApiContext.getInstance(DefaultBotOptions.class));
@@ -47,45 +48,6 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         } catch (IllegalArgumentException ex) {
             log.error("failed to handle command: {}", ex.getMessage(), ex);
             handleError(ex);
-        }
-    }
-
-    /**
-     * Handle the command without query parameters
-     */
-    abstract void handle();
-
-    /**
-     * Handle the command with query parameters
-     */
-    abstract void handleWithQuery();
-
-    private void handleError(Exception exception) {
-        log.debug("handling error with photo... {}", exception.getMessage(), exception);
-        try {
-            SendMessage sendMessage = new SendMessage()
-                .setChatId(this.chatId)
-                .setText("An exception occured: " + exception.getMessage());
-
-            execute(sendMessage);
-        } catch (Exception e) {
-            log.error("exception while handling error: {}", e.getMessage());
-        }
-    }
-
-    private void handleError(Exception exception, SubredditImage image) {
-        if (image == null) {
-            handleError(exception);
-        } else {
-            String messageTemplate = "Exception occured %s; while trying to send item %s from source %s";
-            SendMessage sendMessage = new SendMessage()
-                .setChatId(this.chatId)
-                .setText(String.format(messageTemplate, exception.getMessage(), image.getId(), image.getSource()));
-            try {
-                execute(sendMessage);
-            } catch (Exception e) {
-                log.error("exception while handling error: {}", e.getMessage());
-            }
         }
     }
 
@@ -117,55 +79,48 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     void sendItem(SubredditImage image) {
-        if (isNull(image)) return;
+        if (isNull(image)) {
+            return;
+        }
 
         log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
         if (image.isAnimated()) {
-            if (image.getSource().equalsIgnoreCase("gfycat.com")) {
-                SendMessage message = new SendMessage()
-                    .setChatId(this.chatId)
-                    .setText(image.getTitle() + "\n" + image.getImageLink());
-                send(message);
-            } else {
-                SendAnimation animation = new SendAnimation()
-                    .setChatId(this.chatId)
-                    .setAnimation(image.getImageLink())
-                    .setCaption(image.getTitle());
-                send(animation);
-            }
-
+            SendMessage message = new SendMessage().setChatId(this.chatId)
+                .setText(image.getTitle() + "\n" + image.getImageLink());
+            send(message);
         } else {
-            SendPhoto photo = new SendPhoto()
-                .setChatId(this.chatId)
+            SendPhoto photo = new SendPhoto().setChatId(this.chatId)
                 .setPhoto(image.getImageLink())
                 .setCaption(image.getTitle());
-
             send(photo);
         }
     }
 
     void sendItem(String message, SubredditImage image) {
-        if (isNull(image)) return;
+        if (isNull(image)) {
+            return;
+        }
 
         if (image.isAnimated()) {
-            if (sendAnimationAsMessage(image)) {
-                SendMessage sendMessage = new SendMessage()
-                    .setChatId(this.chatId)
-                    .setText(message + "\n" + image.getTitle() + "\n" + image.getImageLink());
-                send(sendMessage);
-            } else {
-                SendAnimation animation = new SendAnimation()
-                    .setChatId(this.chatId)
-                    .setAnimation(image.getImageLink())
-                    .setCaption(message);
-                send(animation);
-            }
+            SendMessage sendMessage = new SendMessage().setChatId(this.chatId)
+                .setText(message + "\n" + image.getTitle() + "\n" + image.getImageLink());
+            send(sendMessage);
         } else {
-            SendPhoto photo = new SendPhoto()
-                .setChatId(this.chatId)
+            SendPhoto photo = new SendPhoto().setChatId(this.chatId)
                 .setPhoto(image.getImageLink())
                 .setCaption(message);
             send(photo);
+        }
+    }
+
+    private void handleError(Exception exception) {
+        log.debug("handling error with photo... {}", exception.getMessage(), exception);
+        try {
+            SendMessage sendMessage = new SendMessage().setChatId(this.chatId)
+                .setText("An exception occured: " + exception.getMessage());
+            execute(sendMessage);
+        } catch (Exception e) {
+            log.error("exception while handling error: {}", e.getMessage());
         }
     }
 
@@ -174,15 +129,20 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
             return false;
         } else {
             log.debug("retrieved a null reference, sending message.");
-            SendMessage message = new SendMessage()
-                .setChatId(this.chatId)
+            SendMessage message = new SendMessage().setChatId(this.chatId)
                 .setText("No images found... received NULL from findImage");
             send(message);
             return true;
         }
     }
 
-    private boolean sendAnimationAsMessage(SubredditImage image) {
-        return image.getSource().equalsIgnoreCase("gfycat.com");
-    }
+    /**
+     * Handle the command without query parameters
+     */
+    abstract void handle();
+
+    /**
+     * Handle the command with query parameters
+     */
+    abstract void handleWithQuery();
 }
