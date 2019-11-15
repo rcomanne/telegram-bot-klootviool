@@ -88,8 +88,9 @@ public class SubredditService {
 
             final String window = decideWindow(subreddit.getLastUpdated());
             List<SubredditImage> items = scraper.scrapeSubreddit(subredditName, window);
-            log.debug("scraped and saved {} items for subreddit {}", items.size(), subredditName);
-            imageRepository.saveAll(items);
+            log.debug("scraped {} items for subreddit {}", items.size(), subredditName);
+            items = imageRepository.saveAll(items);
+            log.debug("saved {} items for subreddit {}", items.size(), subredditName);
             subreddit.setLastUpdated(LocalDateTime.now());
             subredditRepository.save(subreddit);
         } else {
