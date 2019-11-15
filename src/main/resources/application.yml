@@ -17,8 +17,8 @@ subreddit:
 reddit:
   url:
     base: https://www.reddit.com/
-    topAfter: ${fpx.reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&after={after}
-    topBefore: ${fpx.reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&before={before}
+    topAfter: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&after={after}
+    topBefore: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&before={before}
 
 imgur:
   url:
