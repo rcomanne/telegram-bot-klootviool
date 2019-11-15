@@ -40,7 +40,9 @@ pipeline {
 				branch 'master'
 			}
 			steps {
+				sh "./scripts/cleanup.sh"
 				sh "./scripts/copy_and_start.sh"
+				sh "./scripts/notify.sh"
 			}
 		}
 	}
