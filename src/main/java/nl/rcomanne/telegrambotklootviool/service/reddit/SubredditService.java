@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class SubredditService {
-//    private final ImgurSubredditScraper imgurScraper;
     private final RedditSubredditScraper scraper;
     private final SubredditImageRepository imageRepository;
     private final SubredditRepository subredditRepository;
@@ -39,9 +38,7 @@ public class SubredditService {
     private final Random r = new Random();
 
     private static final int SAMPLE_SIZE = 5;
-    private static final String SUBREDDIT_MATCH_KEY = "subreddit";
-    private static final String TITLE_MATCH_KEY = "title";
-    private static final String DEF_WINDOW = "day";
+    private static final String SUBREDDIT_MATCH_KEY = SubredditImage.COLLECTION_NAME;
 
     public SubredditImage findRandom() {
         log.info("finding random image");
@@ -60,22 +57,9 @@ public class SubredditService {
     public SubredditImage findRandomBySubreddit(final String subreddit) {
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("finding random image from {}", cleanSubreddit);
-        MatchOperation matchStage = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(cleanSubreddit));
+        MatchOperation matchStage = Aggregation.match(new Criteria("subreddit").is(cleanSubreddit));
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(matchStage, sampleStage);
-
-        return doFind(aggregation, cleanSubreddit);
-    }
-
-    public SubredditImage findBySubredditAndTitle(final String subreddit, final String title) {
-        final String cleanSubreddit = subreddit.toLowerCase().trim();
-        final String cleanTitle = title.toLowerCase().trim();
-        log.debug("finding random image from {} with title {}", cleanSubreddit, cleanTitle);
-        MatchOperation subredditMatch = Aggregation.match(new Criteria(SUBREDDIT_MATCH_KEY).is(cleanSubreddit));
-        String pattern = "/.*(" + cleanTitle + ").*/gi";
-        MatchOperation titleMatch = Aggregation.match(new Criteria(TITLE_MATCH_KEY).regex(pattern));
-        SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
-        Aggregation aggregation = Aggregation.newAggregation(subredditMatch, titleMatch, sampleStage);
 
         return doFind(aggregation, cleanSubreddit);
     }
@@ -87,13 +71,8 @@ public class SubredditService {
             log.info("found images {}/{} in {}", images.size(), SAMPLE_SIZE, subreddit);
             return images.get(r.nextInt(images.size()));
         } else {
-            log.info("no images found, scraping and saving");
-            images = scrapeAndSave(subreddit, DEF_WINDOW);
-            if (images.isEmpty()) {
-                return null;
-            } else {
-                return images.get(r.nextInt(images.size()));
-            }
+            log.warn("no images found in {}, scraping is probably going on in the background", subreddit);
+            return null;
         }
     }
 

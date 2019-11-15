@@ -6,6 +6,9 @@ public class SubredditUtility {
     private SubredditUtility() {}
 
     public static String decideWindow(LocalDateTime lastUpdated) {
+        if (lastUpdated.isBefore(LocalDateTime.now().minusMonths(1))) {
+            return "all";
+        }
         if (lastUpdated.isBefore(LocalDateTime.now().minusWeeks(1))) {
             return "week";
         } else {

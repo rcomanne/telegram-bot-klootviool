@@ -60,7 +60,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
      */
     abstract void handleWithQuery();
 
-    void handleError(Exception exception) {
+    private void handleError(Exception exception) {
         log.debug("handling error with photo... {}", exception.getMessage());
         try {
             SendMessage sendMessage = new SendMessage()
@@ -101,6 +101,8 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     void sendItem(SubredditImage image) {
+        if (isNull(image)) return;
+
         log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
         if (image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
@@ -120,6 +122,8 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     void sendItem(String message, SubredditImage image) {
+        if (isNull(image)) return;
+
         if (image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
                 .setChatId(this.chatId)
@@ -132,6 +136,19 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
                 .setPhoto(image.getImageLink())
                 .setCaption(message);
             send(photo);
+        }
+    }
+
+    private boolean isNull(SubredditImage image) {
+        if (image != null) {
+            return false;
+        } else {
+            log.debug("retrieved a null reference, sending message.");
+            SendMessage message = new SendMessage()
+                .setChatId(this.chatId)
+                .setText("No images found... received NULL from findImage");
+            send(message);
+            return true;
         }
     }
 }

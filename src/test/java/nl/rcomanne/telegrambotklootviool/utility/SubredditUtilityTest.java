@@ -18,7 +18,7 @@ public class SubredditUtilityTest {
             .build();
 
         String window = SubredditUtility.decideWindow(subreddit.getLastUpdated());
-        assertEquals("week", window);
+        assertEquals("all", window);
     }
 
     @Test

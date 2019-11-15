@@ -5,7 +5,7 @@ import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SubredditCommand extends Command {
+class SubredditCommand extends Command {
 
     private final SubredditService service;
 
@@ -29,8 +29,7 @@ public class SubredditCommand extends Command {
     @Override
     void handleWithQuery() {
         log.debug("handling subreddit command for {}", this.query);
-        sendItem(service.findRandomBySubreddit(this.query));
-        sendItem("scraping subreddit " + this.query, service.findRandom());
         service.scrapeSubredditAsync(this.query);
+        sendItem(service.findRandomBySubreddit(this.query));
     }
 }

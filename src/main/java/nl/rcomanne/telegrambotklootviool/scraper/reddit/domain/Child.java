@@ -15,6 +15,10 @@ public class Child {
     public boolean isAnimated() {
         boolean animated = false;
 
+        if (data != null && data.getMedia() != null) {
+            if (data.getMedia().getOembed().getType().equalsIgnoreCase("video"))
+                animated = true;
+        }
 
         return animated;
     }

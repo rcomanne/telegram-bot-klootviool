@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class RedditSubredditScraper implements SubredditScraper {
-    private static final String DEFAULT_WINDOW = "day";
     private static final int DEFAULT_LIMIT = 100;
 
     @Value("${reddit.url.topAfter}")
@@ -54,15 +55,13 @@ public class RedditSubredditScraper implements SubredditScraper {
                 final List<Child> items = response.getData().getChildren();
                 // adding all retrieved items to the list
                 log.debug("received {} entries, adding to images list", items.size());
-                images.addAll(convertItems(items));
+                images.addAll(convertItems(subreddit, items));
             } catch (RuntimeException ex) {
                 log.debug("a request failed, return images we have now");
                 return images;
             }
         } while (images.size() % 100 == 0);
         return images;
-
-
     }
 
     private RedditSubredditResponse retrieveItems(String subreddit, String window, String after) {
@@ -91,26 +90,25 @@ public class RedditSubredditScraper implements SubredditScraper {
         } catch (Exception ex) {
             log.warn("received client exception while retrieving images from Reddit. '{}'", ex.getMessage(), ex);
         }
-
         return new RedditSubredditResponse();
     }
 
-    private List<SubredditImage> convertItems(List<Child> entries) {
+    @VisibleForTesting
+    List<SubredditImage> convertItems(String subreddit, List<Child> entries) {
         final List<SubredditImage> convertedItems = new ArrayList<>(entries.size());
         for (Child child : entries) {
             ChildData data = child.getData();
-            log.debug("converting child '{}'", data.getId());
+            log.trace("converting child '{}'", data.getId());
             convertedItems.add(SubredditImage.builder()
                 .id(data.getId())
                 .title(data.getTitle())
                 .imageLink(data.getUrl())
-                .subreddit(data.getSubreddit())
-                .animated(data.getMedia().getOembed().getType().equalsIgnoreCase("video"))
+                .subreddit(subreddit)
+                .animated(child.isAnimated())
                 .nsfw(data.isOver18())
                 .score(data.getScore())
                 .build());
         }
-
         log.info("converted {} items", convertedItems.size());
         return convertedItems;
     }
