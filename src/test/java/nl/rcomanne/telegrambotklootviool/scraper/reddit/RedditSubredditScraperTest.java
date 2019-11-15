@@ -30,6 +30,7 @@ public class RedditSubredditScraperTest {
 
         ChildData data = new ChildData();
         data.setId("no-media");
+        data.setUrl("no-url");
     }
 
     @Test

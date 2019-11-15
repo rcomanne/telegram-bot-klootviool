@@ -13,7 +13,7 @@ public class Child {
     private ChildData data;
 
     public boolean isAnimated() {
-        if (data != null && data.getMedia() != null && data.getMedia().getOembed() != null) {
+        if (data != null && data.getUrl() != null) {
             if (data.getUrl().contains(".gif")) {
                 return true;
             }

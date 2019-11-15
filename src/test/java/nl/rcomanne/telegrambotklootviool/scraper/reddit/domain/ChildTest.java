@@ -32,10 +32,38 @@ public class ChildTest {
 
         ChildData childData = new ChildData();
         childData.setMedia(media);
+        childData.setUrl("animated-video");
 
         child.setData(childData);
 
         assertTrue(child.isAnimated());
+    }
+
+    @Test
+    public void isAnimatedFromImgur() {
+        ChildData childData = new ChildData();
+        childData.setUrl("https://i.imgur.com/KZNJjEx.gifv");
+
+        child.setData(childData);
+        assertTrue(child.isAnimated());
+    }
+
+    @Test
+    public void isAnimatedEmptyString() {
+        ChildData childData = new ChildData();
+        childData.setUrl("");
+
+        child.setData(childData);
+        assertFalse(child.isAnimated());
+    }
+
+    @Test
+    public void isAnimatedNoUrl() {
+        ChildData childData = new ChildData();
+        childData.setUrl(null);
+
+        child.setData(childData);
+        assertFalse(child.isAnimated());
     }
 
     @Test
@@ -46,6 +74,7 @@ public class ChildTest {
     @Test
     public void isAnimatedMediaNull() {
         ChildData childData = new ChildData();
+        childData.setUrl("media-null");
         child.setData(childData);
         assertFalse(child.isAnimated());
     }

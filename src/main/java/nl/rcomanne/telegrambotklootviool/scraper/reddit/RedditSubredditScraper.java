@@ -112,7 +112,6 @@ public class RedditSubredditScraper implements SubredditScraper {
                     .score(data.getScore())
                     .source(child.getSource())
                     .build());
-
             } catch (Exception e) {
                 log.warn("failed to convert item: {}", child, e);
             }
