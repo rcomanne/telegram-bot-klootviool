@@ -17,7 +17,7 @@ public class CommandService {
     @Value("${bot.token}")
     private String botToken;
 
-    @Value("${bot.name}")
+    @Value("${bot.username}")
     private String botName;
 
     private final CommandFactory commandFactory;
