@@ -1,22 +1,24 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# exit when anything fails
+set -euo pipefail
 
 BASE_DIR=/var/opt/services/telegram-bot-klootviool
-CONF_DIR=${BASE_DIR}/config
 
 echo "removing old logback file"
-rm ${CONF_DIR}/logback.xml
+rm ${BASE_DIR}/logback.xml
 
 echo "copying new logback file"
-cp target/classes/logback-server.xml ${CONF_DIR}/logback.xml
+cp target/classes/logback-server.xml ${BASE_DIR}/logback.xml
 
 echo "removing old jar"
-rm ${BASE_DIR}/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar
+rm ${BASE_DIR}/telegram-bot-klootviool.jar
 
 echo "ensure jar is executable"
-chmod +x target/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar
+chmod +x target/*.jar
 
 echo "copying new jar to /var/opt/services/opt/services/telegram-bot-klootviool"
-cp target/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar ${BASE_DIR}/
+cp target/telegram-bot-klootviool-0.0.1-SNAPSHOT.jar ${BASE_DIR}/telegram-bot-klootviool.jar
 
 echo "restarting the service"
 sudo systemctl restart telegram-bot-klootviool.service

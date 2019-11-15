@@ -105,7 +105,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                 .title(data.getTitle())
                 .imageLink(data.getUrl())
                 .subreddit(data.getSubreddit())
-                .animated(data.getMedia().getOembed().getType().equalsIgnoreCase("video")) // todo: is_video is FALSE for gif(v)/mp4/webm -> create REGEX
+                .animated(data.getMedia().getOembed().getType().equalsIgnoreCase("video"))
                 .nsfw(data.isOver18())
                 .score(data.getScore())
                 .build());
