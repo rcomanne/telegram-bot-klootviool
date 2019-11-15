@@ -1,6 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,9 @@ public class MessageService extends DefaultAbsSender {
     @Value("${bot.token}")
     private String token;
 
-    private final SubredditImageService imageService;
+    private final SubredditService imageService;
 
-    public MessageService(final SubredditImageService imageService) {
+    public MessageService(final SubredditService imageService) {
         super(ApiContext.getInstance(DefaultBotOptions.class));
         this.imageService = imageService;
     }

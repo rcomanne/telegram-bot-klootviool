@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -22,7 +22,7 @@ public class UpdateCommandService extends AbstractCommandService {
 
     private static final String DEF_WINDOW = "day";
 
-    private final SubredditImageService service;
+    private final SubredditService service;
 
     private final Random r = new Random();
 

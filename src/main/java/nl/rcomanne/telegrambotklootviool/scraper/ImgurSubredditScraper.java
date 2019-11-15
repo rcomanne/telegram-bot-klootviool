@@ -34,9 +34,6 @@ public class ImgurSubredditScraper {
 
     private final RestTemplate restTemplate;
 
-    public List<SubredditImage> scrapeSubreddit(String subreddit, String window, int startPage) {
-        return scrapeSubreddit(subreddit, window, startPage, 1000);
-    }
 
     public List<SubredditImage> scrapeSubreddit(String subreddit, String window, int startPage, int endPage) {
         log.info("scraping subreddit {} for window {}", subreddit, window);

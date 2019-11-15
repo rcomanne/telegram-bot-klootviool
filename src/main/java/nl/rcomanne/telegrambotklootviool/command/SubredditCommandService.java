@@ -1,6 +1,6 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -16,7 +16,7 @@ public class SubredditCommandService extends AbstractCommandService {
     @Value("${bot.token}")
     private String token;
 
-    private final SubredditImageService service;
+    private final SubredditService service;
 
     @Override
     public void handle(long chatId) {

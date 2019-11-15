@@ -5,7 +5,7 @@ import java.util.Random;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.MessageService;
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,7 +28,7 @@ public class ScheduledTasks {
     private final Random random = new Random();
 
     private final MessageService messageService;
-    private final SubredditImageService imageService;
+    private final SubredditService imageService;
 
 /*
     @Scheduled(cron = "0 0 * * * *")

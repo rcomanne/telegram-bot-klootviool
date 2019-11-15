@@ -2,16 +2,14 @@ package nl.rcomanne.telegrambotklootviool.bots;
 
 import java.util.List;
 
-import nl.rcomanne.telegrambotklootviool.service.CommandService;
+import nl.rcomanne.telegrambotklootviool.handlers.command.CommandService;
+import nl.rcomanne.telegrambotklootviool.handlers.message.MessageHandler;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
@@ -19,8 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class SimpleBot implements LongPollingBot {
+public class KlootvioolBot implements LongPollingBot {
     @Value("${bot.token}")
     private String token;
 
@@ -29,9 +26,11 @@ public class SimpleBot implements LongPollingBot {
 
     private final BotOptions options;
     private final CommandService commandService;
+    private final MessageHandler messageHandler;
 
-    public SimpleBot(final CommandService commandService) {
+    public KlootvioolBot(final CommandService commandService, final MessageHandler messageHandler) {
         this.commandService = commandService;
+        this.messageHandler = messageHandler;
         this.options = new DefaultBotOptions();
     }
 
@@ -43,23 +42,25 @@ public class SimpleBot implements LongPollingBot {
             return;
         }
 
-        if (update.hasMessage()) {
-            final long chatId = update.getMessage().getChatId();
-            if (update.getMessage().isCommand()) {
-                // update is a command, pass it on to the command service
-                String message = update.getMessage().getText();
-                log.debug("received command {}", message);
-                List<MessageEntity> entities = update.getMessage().getEntities();
-                if (message.contains(" ")) {
-                    for (MessageEntity entity : entities) {
-                        commandService.processWithQuery(chatId, entity, message.substring(message.indexOf(' ') + 1));
-                    }
-                } else {
-                    for (MessageEntity entity : entities) {
-                        commandService.process(chatId, entity);
-                    }
+        final long chatId = update.getMessage().getChatId();
+        if (update.getMessage().isCommand()) {
+            String message = update.getMessage().getText();
+            log.info("received command {}", message);
+            List<MessageEntity> entities = update.getMessage().getEntities();
+            if (message.contains(" ")) {
+                log.info("handling command with query");
+                for (MessageEntity entity : entities) {
+                    commandService.handleWithQuery(entity, chatId, message.substring(message.indexOf(' ') + 1));
+                }
+            } else {
+                log.info("handling command without query");
+                for (MessageEntity entity : entities) {
+                    commandService.handle(entity, chatId);
                 }
             }
+
+        } else if (update.getMessage().hasText()) {
+            messageHandler.handle(update);
         }
     }
 
@@ -85,7 +86,7 @@ public class SimpleBot implements LongPollingBot {
     }
 
     @Override
-    public void clearWebhook() throws TelegramApiRequestException {
+    public void clearWebhook() {
         // do nothing -- no webhook
     }
 }

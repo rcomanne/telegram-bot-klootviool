@@ -1,7 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.command;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-import nl.rcomanne.telegrambotklootviool.service.SubredditImageService;
+import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -19,7 +19,7 @@ public class ProgrammerHumorCommandService extends AbstractCommandService {
 
     private static final String SUBREDDIT = "programmerhumor";
 
-    private final SubredditImageService service;
+    private final SubredditService service;
 
     public void handle(long chatId) {
         SubredditImage selected = service.findRandomBySubreddit(SUBREDDIT);
