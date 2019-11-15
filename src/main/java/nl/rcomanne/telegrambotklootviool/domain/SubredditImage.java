@@ -27,4 +27,5 @@ public class SubredditImage implements Serializable {
     private boolean animated;
     private boolean nsfw;
     private long score;
+    private String source;
 }

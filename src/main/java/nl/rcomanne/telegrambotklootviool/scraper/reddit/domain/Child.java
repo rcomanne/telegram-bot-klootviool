@@ -15,11 +15,19 @@ public class Child {
     public boolean isAnimated() {
         boolean animated = false;
 
-        if (data != null && data.getMedia() != null) {
+        if (data != null && data.getMedia() != null && data.getMedia().getOembed() != null) {
             if (data.getMedia().getOembed().getType().equalsIgnoreCase("video"))
                 animated = true;
         }
 
         return animated;
+    }
+
+    public String getSource() {
+        if (data != null && data.getMedia() != null && data.getMedia().getType() != null) {
+            return data.getMedia().getType();
+        } else {
+            return "unknown";
+        }
     }
 }

@@ -49,4 +49,12 @@ public class ChildTest {
         child.setData(childData);
         assertFalse(child.isAnimated());
     }
+
+    @Test
+    public void isAnimatedOemediaNull() {
+        ChildData childData = new ChildData();
+        Media media = new Media();
+        childData.setMedia(media);
+        assertFalse(child.isAnimated());
+    }
 }

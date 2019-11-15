@@ -108,6 +108,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                     .animated(child.isAnimated())
                     .nsfw(data.isOver18())
                     .score(data.getScore())
+                    .source(child.getSource())
                     .build());
 
             } catch (Exception e) {

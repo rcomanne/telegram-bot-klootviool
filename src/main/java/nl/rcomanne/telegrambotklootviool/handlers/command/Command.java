@@ -73,6 +73,22 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         }
     }
 
+    private void handleError(Exception exception, SubredditImage image) {
+        if (image == null) {
+            handleError(exception);
+        } else {
+            String messageTemplate = "Exception occured %s; while trying to send item %s from source %s";
+            SendMessage sendMessage = new SendMessage()
+                .setChatId(this.chatId)
+                .setText(String.format(messageTemplate, exception.getMessage(), image.getId(), image.getSource()));
+            try {
+                execute(sendMessage);
+            } catch (Exception e) {
+                log.error("exception while handling error: {}", e.getMessage());
+            }
+        }
+    }
+
     void send(SendPhoto sendPhoto) {
         log.debug("sending photo to chat: {}", sendPhoto.getChatId());
         try {
@@ -104,7 +120,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         if (isNull(image)) return;
 
         log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
-        if (false || image.isAnimated()) {
+        if (image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
                 .setChatId(this.chatId)
                 .setAnimation(image.getImageLink())
@@ -124,7 +140,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     void sendItem(String message, SubredditImage image) {
         if (isNull(image)) return;
 
-        if (false || image.isAnimated()) {
+        if (image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
                 .setChatId(this.chatId)
                 .setAnimation(image.getImageLink())
