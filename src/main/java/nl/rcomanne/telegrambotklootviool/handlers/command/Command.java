@@ -104,7 +104,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         if (isNull(image)) return;
 
         log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
-        if (image.isAnimated()) {
+        if (false || image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
                 .setChatId(this.chatId)
                 .setAnimation(image.getImageLink())
@@ -124,7 +124,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     void sendItem(String message, SubredditImage image) {
         if (isNull(image)) return;
 
-        if (image.isAnimated()) {
+        if (false || image.isAnimated()) {
             SendAnimation animation = new SendAnimation()
                 .setChatId(this.chatId)
                 .setAnimation(image.getImageLink())
