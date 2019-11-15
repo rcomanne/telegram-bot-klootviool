@@ -102,7 +102,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                 ChildData data = child.getData();
                 log.trace("converting child '{}'", data.getId());
                 convertedItems.add(SubredditImage.builder()
-                    .id(UUID.randomUUID().toString())
+                    .id(data.getId())
                     .title(data.getTitle())
                     .imageLink(data.getUrl())
                     .subreddit(subreddit)

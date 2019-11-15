@@ -121,12 +121,19 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
 
         log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
         if (image.isAnimated()) {
-            SendAnimation animation = new SendAnimation()
-                .setChatId(this.chatId)
-                .setAnimation(image.getImageLink())
-                .setCaption(image.getTitle());
+            if (image.getSource().equalsIgnoreCase("gfycat.com")) {
+                SendMessage message = new SendMessage()
+                    .setChatId(this.chatId)
+                    .setText(image.getTitle() + "\n" + image.getImageLink());
+                send(message);
+            } else {
+                SendAnimation animation = new SendAnimation()
+                    .setChatId(this.chatId)
+                    .setAnimation(image.getImageLink())
+                    .setCaption(image.getTitle());
+                send(animation);
+            }
 
-            send(animation);
         } else {
             SendPhoto photo = new SendPhoto()
                 .setChatId(this.chatId)
@@ -141,11 +148,18 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         if (isNull(image)) return;
 
         if (image.isAnimated()) {
-            SendAnimation animation = new SendAnimation()
-                .setChatId(this.chatId)
-                .setAnimation(image.getImageLink())
-                .setCaption(message);
-            send(animation);
+            if (sendAnimationAsMessage(image)) {
+                SendMessage sendMessage = new SendMessage()
+                    .setChatId(this.chatId)
+                    .setText(message + "\n" + image.getTitle() + "\n" + image.getImageLink());
+                send(sendMessage);
+            } else {
+                SendAnimation animation = new SendAnimation()
+                    .setChatId(this.chatId)
+                    .setAnimation(image.getImageLink())
+                    .setCaption(message);
+                send(animation);
+            }
         } else {
             SendPhoto photo = new SendPhoto()
                 .setChatId(this.chatId)
@@ -166,5 +180,9 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
             send(message);
             return true;
         }
+    }
+
+    private boolean sendAnimationAsMessage(SubredditImage image) {
+        return image.getSource().equalsIgnoreCase("gfycat.com");
     }
 }
