@@ -83,12 +83,13 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
             return;
         }
 
-        log.debug("sending image '{}' to chat '{}'", image.getId(), this.chatId);
         if (image.isAnimated()) {
+            log.debug("sending animation '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendMessage message = new SendMessage().setChatId(this.chatId)
                 .setText(image.getTitle() + "\n" + image.getImageLink());
             send(message);
         } else {
+            log.debug("sending image '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendPhoto photo = new SendPhoto().setChatId(this.chatId)
                 .setPhoto(image.getImageLink())
                 .setCaption(image.getTitle());
@@ -102,10 +103,12 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         }
 
         if (image.isAnimated()) {
+            log.debug("sending animation '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendMessage sendMessage = new SendMessage().setChatId(this.chatId)
                 .setText(message + "\n" + image.getTitle() + "\n" + image.getImageLink());
             send(sendMessage);
         } else {
+            log.debug("sending photo '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendPhoto photo = new SendPhoto().setChatId(this.chatId)
                 .setPhoto(image.getImageLink())
                 .setCaption(message);
@@ -114,7 +117,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     private void handleError(Exception exception) {
-        log.debug("handling error with photo... {}", exception.getMessage(), exception);
+        log.debug("handling error with item... {}", exception.getMessage(), exception);
         try {
             SendMessage sendMessage = new SendMessage().setChatId(this.chatId)
                 .setText("An exception occured: " + exception.getMessage());

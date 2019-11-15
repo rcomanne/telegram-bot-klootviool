@@ -16,10 +16,13 @@ public class Child {
         boolean animated = false;
 
         if (data != null && data.getMedia() != null && data.getMedia().getOembed() != null) {
-            if (data.getMedia().getOembed().getType().equalsIgnoreCase("video"))
+            if (data.getMedia().getOembed().getType().equalsIgnoreCase("video"))  {
                 animated = true;
+            }
+            if (data.getMedia().getOembed().getType().equalsIgnoreCase("gif")) {
+                animated = true;
+            }
         }
-
         return animated;
     }
 
