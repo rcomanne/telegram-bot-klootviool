@@ -128,4 +128,10 @@ public class SubredditService {
         log.info("saved {} items from subreddit {}", cleanList.size(), subreddit);
         return images;
     }
+
+    public void resetLastUpdatedForSubreddit(String subredditName) {
+        Subreddit subreddit = findOrCreateSubreddit(subredditName);
+        subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
+        subredditRepository.save(subreddit);
+    }
 }

@@ -97,17 +97,22 @@ public class RedditSubredditScraper implements SubredditScraper {
     List<SubredditImage> convertItems(String subreddit, List<Child> entries) {
         final List<SubredditImage> convertedItems = new ArrayList<>(entries.size());
         for (Child child : entries) {
-            ChildData data = child.getData();
-            log.trace("converting child '{}'", data.getId());
-            convertedItems.add(SubredditImage.builder()
-                .id(data.getId())
-                .title(data.getTitle())
-                .imageLink(data.getUrl())
-                .subreddit(subreddit)
-                .animated(child.isAnimated())
-                .nsfw(data.isOver18())
-                .score(data.getScore())
-                .build());
+            try {
+                ChildData data = child.getData();
+                log.trace("converting child '{}'", data.getId());
+                convertedItems.add(SubredditImage.builder()
+                    .id(data.getId())
+                    .title(data.getTitle())
+                    .imageLink(data.getUrl())
+                    .subreddit(subreddit)
+                    .animated(child.isAnimated())
+                    .nsfw(data.isOver18())
+                    .score(data.getScore())
+                    .build());
+
+            } catch (Exception e) {
+                log.warn("failed to convert item: {}", child, e);
+            }
         }
         log.info("converted {} items", convertedItems.size());
         return convertedItems;
