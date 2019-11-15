@@ -57,6 +57,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                 // adding all retrieved items to the list
                 log.debug("received {} entries, adding to images list", items.size());
                 images.addAll(convertItems(subreddit, items));
+                log.debug("before: '{}', and after: '{}'", response.getData().getBefore(), response.getData().getAfter());
                 after = response.getData().getBefore();
             } catch (RuntimeException ex) {
                 log.debug("a request failed, return images we have now");
