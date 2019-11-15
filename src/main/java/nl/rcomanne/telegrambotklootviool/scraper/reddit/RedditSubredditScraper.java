@@ -2,6 +2,7 @@ package nl.rcomanne.telegrambotklootviool.scraper.reddit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.SubredditScraper;
@@ -101,7 +102,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                 ChildData data = child.getData();
                 log.trace("converting child '{}'", data.getId());
                 convertedItems.add(SubredditImage.builder()
-                    .id(data.getId())
+                    .id(UUID.randomUUID().toString())
                     .title(data.getTitle())
                     .imageLink(data.getUrl())
                     .subreddit(subreddit)

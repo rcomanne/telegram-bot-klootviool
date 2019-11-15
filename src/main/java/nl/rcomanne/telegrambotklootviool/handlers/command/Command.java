@@ -61,7 +61,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     abstract void handleWithQuery();
 
     private void handleError(Exception exception) {
-        log.debug("handling error with photo... {}", exception.getMessage());
+        log.debug("handling error with photo... {}", exception.getMessage(), exception);
         try {
             SendMessage sendMessage = new SendMessage()
                 .setChatId(this.chatId)
