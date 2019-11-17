@@ -21,6 +21,9 @@ public class Child {
             if (data.getUrl().contains("redd.it") || data.getUrl().contains("reddit")) {
                 return "reddit";
             }
+            if (data.getUrl().contains("imgur")) {
+                return "imgur";
+            }            
         } return "unknown";
     }
 
