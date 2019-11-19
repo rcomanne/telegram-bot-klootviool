@@ -19,6 +19,9 @@ public class SubredditImage implements Serializable {
     @Transient
     public static final String COLLECTION_NAME = "images";
 
+    @Transient
+    public static final String SUBREDDIT_KEY = "subreddit";
+
     @Id
     private String id;
     private String title;

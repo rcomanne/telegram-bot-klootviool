@@ -38,14 +38,15 @@ public class SubredditService {
     private final Random r = new Random();
 
     private static final int SAMPLE_SIZE = 5;
-    private static final String SUBREDDIT_MATCH_KEY = SubredditImage.COLLECTION_NAME;
+    private static final String SUBREDDIT_COLL_NAME = SubredditImage.COLLECTION_NAME;
+    private static final String SUBREDDIT_KEY = SubredditImage.SUBREDDIT_KEY;
 
     public SubredditImage findRandom() {
         log.info("finding random image");
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(sampleStage);
 
-        List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_MATCH_KEY, SubredditImage.class).getMappedResults();
+        List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_COLL_NAME, SubredditImage.class).getMappedResults();
 
         if (!images.isEmpty()) {
             return images.get(r.nextInt(images.size()));
@@ -57,7 +58,7 @@ public class SubredditService {
     public SubredditImage findRandomBySubreddit(final String subreddit) {
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("finding random image from {}", cleanSubreddit);
-        MatchOperation matchStage = Aggregation.match(new Criteria("subreddit").is(cleanSubreddit));
+        MatchOperation matchStage = Aggregation.match(new Criteria(SUBREDDIT_KEY).is(cleanSubreddit));
         SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
         Aggregation aggregation = Aggregation.newAggregation(matchStage, sampleStage);
 
@@ -66,12 +67,12 @@ public class SubredditService {
 
     @Nullable
     private SubredditImage doFind(Aggregation aggregation, String subreddit) {
-        List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_MATCH_KEY, SubredditImage.class).getMappedResults();
+        List<SubredditImage> images = template.aggregate(aggregation, SUBREDDIT_COLL_NAME, SubredditImage.class).getMappedResults();
         if (!images.isEmpty()) {
             log.info("found images {}/{} in {}", images.size(), SAMPLE_SIZE, subreddit);
             return images.get(r.nextInt(images.size()));
         } else {
-            log.warn("no images found in {}, scraping is probably going on in the background", subreddit);
+            log.warn("no images found in {}", subreddit);
             return null;
         }
     }

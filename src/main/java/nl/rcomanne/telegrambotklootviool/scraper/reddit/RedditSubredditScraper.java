@@ -2,7 +2,6 @@ package nl.rcomanne.telegrambotklootviool.scraper.reddit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.SubredditScraper;
@@ -42,7 +41,7 @@ public class RedditSubredditScraper implements SubredditScraper {
         List<SubredditImage> images = new ArrayList<>();
         do {
             try {
-                if (request > 10) {
+                if (request >= 10) {
                     log.debug("retrieved 10 pages already, we do not need more");
                     return images;
                 }

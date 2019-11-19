@@ -23,7 +23,7 @@ public class Child {
             }
             if (data.getUrl().contains("imgur")) {
                 return "imgur";
-            }            
+            }
         } return "unknown";
     }
 
