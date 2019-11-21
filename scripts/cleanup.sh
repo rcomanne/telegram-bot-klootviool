@@ -7,3 +7,5 @@ rm ${BASE_DIR}/logback.xml
 
 echo "removing old jar"
 rm ${BASE_DIR}/*.jar
+
+echo "cleanup complete"
