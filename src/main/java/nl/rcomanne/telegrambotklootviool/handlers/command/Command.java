@@ -85,9 +85,18 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
 
         if (image.isAnimated()) {
             log.debug("sending animation '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
-            SendMessage message = new SendMessage().setChatId(this.chatId)
-                .setText(image.getTitle() + "\n" + image.getImageLink());
-            send(message);
+            if (sendAsAnimation(image)) {
+                SendAnimation animation = new SendAnimation()
+                    .setChatId(this.chatId)
+                    .setCaption(image.getTitle())
+                    .setAnimation(image.getImageLink());
+                send(animation);
+            } else {
+                SendMessage message = new SendMessage()
+                    .setChatId(this.chatId)
+                    .setText(image.getTitle() + "\n" + image.getImageLink());
+                send(message);
+            }
         } else {
             log.debug("sending image '{}' from '{}' to chat '{}'", image.getId(), image.getSource(), this.chatId);
             SendPhoto photo = new SendPhoto().setChatId(this.chatId)
@@ -124,6 +133,14 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
             execute(sendMessage);
         } catch (Exception e) {
             log.error("exception while handling error: {}", e.getMessage());
+        }
+    }
+
+    private boolean sendAsAnimation(SubredditImage image) {
+        if (image.getImageLink().contains(".gif")) {
+            return true;
+        } else {
+            return false;
         }
     }
 

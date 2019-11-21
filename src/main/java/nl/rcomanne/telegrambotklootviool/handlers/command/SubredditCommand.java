@@ -40,15 +40,23 @@ class SubredditCommand extends Command {
         service.scrapeSubredditAsync(this.query);
         SubredditImage image = service.findRandomBySubreddit(this.query);
         if (image == null) {
-            SendMessage message = new SendMessage()
-                .setChatId(this.chatId)
-                .setText("No images found for subreddit '" + this.query + "', trying to scrape now");
-            send(message);
+            sendMessage("No images found for subreddit '" + this.query + "', trying to scrape now");
             List<SubredditImage> retrievedImages = service.scrapeAndSaveAllTime(this.query);
-            sendItem(retrievedImages.get(r.nextInt(retrievedImages.size())));
+            if (retrievedImages.isEmpty()) {
+                sendMessage("No images found for subreddit '" + this.query + "'");
+            } else {
+                sendItem(retrievedImages.get(r.nextInt(retrievedImages.size())));
+            }
         } else {
             sendItem(image);
             service.scrapeSubredditAsync(this.query);
         }
+    }
+
+    private void sendMessage(String text) {
+        SendMessage message = new SendMessage()
+            .setChatId(this.chatId)
+            .setText(text);
+        send(message);
     }
 }

@@ -18,6 +18,9 @@ public class Child {
             if (data.getMedia() != null && data.getMedia().getType() != null) {
                 return data.getMedia().getType();
             }
+            if (data.getUrl().contains("gfycat")) {
+                return "gfycat.com";
+            }
             if (data.getUrl().contains("redd.it") || data.getUrl().contains("reddit")) {
                 return "reddit";
             }
