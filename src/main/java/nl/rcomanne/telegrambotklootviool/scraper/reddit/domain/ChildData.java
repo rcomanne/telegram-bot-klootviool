@@ -50,7 +50,7 @@ public class ChildData {
     private int score;
     private String approvedBy;
     private String thumbnail;
-    private boolean edited;
+//    private float edited;
     private String authorFlairCssClass;
     private List<String> stewardReports;
     private List<String> authorFlairRichtext;
