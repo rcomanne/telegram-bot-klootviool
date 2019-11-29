@@ -12,3 +12,5 @@ google:
 
 bot:
   token: some-token
+
+telegrambots.enabled: false

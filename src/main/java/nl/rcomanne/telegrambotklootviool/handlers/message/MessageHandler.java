@@ -29,7 +29,7 @@ public class MessageHandler extends DefaultAbsSender {
         // simple help message
 
         final String name = update.getMessage().getFrom().getFirstName();
-        final String response = String.format("Hello %s, how can I help you today?", name);
+        final String response = String.format("STFU %s", name);
 
         SendMessage message = new SendMessage()
             .setChatId(update.getMessage().getChatId())

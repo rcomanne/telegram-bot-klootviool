@@ -3,11 +3,11 @@ package nl.rcomanne.telegrambotklootviool.scheduled;
 import java.util.List;
 import java.util.Random;
 
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.MessageService;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,43 +22,22 @@ public class ScheduledTasks {
     private static final String ME_CHAT_ID = "620393195";
     private static final String DEFAULT_WINDOW = "day";
 
-    @Value("#{'${subreddit.list}'.split(',')}")
-    private List<String> subreddits;
-
     private final Random random = new Random();
 
     private final MessageService messageService;
-    private final SubredditService imageService;
+    private final SubredditService redditService;
 
-/*
-    @Scheduled(cron = "0 0 * * * *")
-    public void testUpdateTime() {
-        log.info("testing update timing for imgur");
-        List<SubredditImage> images = imageService.scrapeAndSave("me_irl", DEFAULT_WINDOW);
-        if (images.isEmpty()) {
-            log.info("no images found with test update");
-            messageService.sendRandomPhoto(ME_CHAT_ID);
-        } else {
-            final int size = images.size();
-            messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for me_irl", size), images.get(random.nextInt(size - 1)));
-        }
-    }
-*/
 
-    @Scheduled(cron = "0 0 8/2 * * *")
-    public void sendRandomPhoto() {
-        log.info("sending random photo");
-        messageService.sendRandomPhoto(CHAT_ID);
-    }
-
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 4 7 * *")
     public void updateSubreddits() {
         log.info("scheduled updating subreddits");
-        for (String subreddit : subreddits) {
-            List<SubredditImage> images = imageService.scrapeAndSave(subreddit, DEFAULT_WINDOW);
+        List<Subreddit> subreddits = redditService.getAllSubreddits();
+
+        for (Subreddit subreddit : subreddits) {
+            List<SubredditImage> images = redditService.weeklyUpdate(subreddit);
             if (images.isEmpty()) {
                 log.info("no images found for subreddit {} while updating", subreddit);
-                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found for subreddit %s", subreddit));
+                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit %s", subreddit));
             } else {
                 log.info("updated subreddit {} with {} images", subreddit, images);
                 final int size = images.size();

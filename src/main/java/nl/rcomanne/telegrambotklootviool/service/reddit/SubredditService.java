@@ -4,6 +4,7 @@ import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
 import static nl.rcomanne.telegrambotklootviool.utility.SubredditUtility.decideWindow;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -135,5 +136,19 @@ public class SubredditService {
         Subreddit subreddit = findOrCreateSubreddit(subredditName);
         subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
         subredditRepository.save(subreddit);
+    }
+
+    public List<SubredditImage> weeklyUpdate(Subreddit subreddit) {
+        if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusWeeks(1))) {
+            log.debug("subreddit '{}' update has been more than one week ago, updating...", subreddit.getName());
+            return scrapeAndSave(subreddit.getName(), "week");
+        } else {
+            log.debug("subreddit '{}' has been updated in the past week, no need to update", subreddit.getName());
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Subreddit> getAllSubreddits() {
+        return subredditRepository.findAll();
     }
 }

@@ -32,7 +32,7 @@ public class Child {
 
     public boolean isAnimated() {
         if (data != null && data.getUrl() != null) {
-            if (data.getUrl().contains(".gif")) {
+            if (data.getUrl().contains("gif")) {
                 return true;
             }
             if (data.getMedia() != null && data.getMedia().getOembed() != null) {
