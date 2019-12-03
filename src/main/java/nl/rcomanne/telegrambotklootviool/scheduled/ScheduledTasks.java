@@ -28,7 +28,7 @@ public class ScheduledTasks {
     private final SubredditService redditService;
 
 
-    @Scheduled(cron = "0 0 4 7 * *")
+    @Scheduled(cron = "0 0 4 * * *")
     public void updateSubreddits() {
         log.info("scheduled updating subreddits");
         List<Subreddit> subreddits = redditService.getAllSubreddits();
