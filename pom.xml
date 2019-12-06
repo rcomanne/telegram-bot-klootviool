@@ -45,6 +45,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Dependency for scraping Instagram -->
+        <dependency>
+            <groupId>com.github.igor-suhorukov</groupId>
+            <artifactId>instagramscraper</artifactId>
+            <version>2.2</version>
+        </dependency>
+
         <!-- Logback dependencies; core, classic, json-classic, jackson, jackson-encoder -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

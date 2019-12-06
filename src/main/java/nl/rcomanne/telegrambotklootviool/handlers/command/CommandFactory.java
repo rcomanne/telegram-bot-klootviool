@@ -1,6 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
 import nl.rcomanne.telegrambotklootviool.service.GoogleSearchService;
+import nl.rcomanne.telegrambotklootviool.service.instagram.InstagramService;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class CommandFactory {
     private final GoogleSearchService searchService;
     private final SubredditService subredditService;
+    private final InstagramService instagramService;
 
     @Value("${bot.token}")
     private String botToken;
@@ -23,6 +25,8 @@ public class CommandFactory {
                 return new PicCommand(parameters, botToken, searchService);
             case SUBREDDIT:
                 return new SubredditCommand(parameters, botToken, subredditService);
+            case INSTA:
+                return new InstagramCommand(parameters, botToken, instagramService);
             case UPDATE:
                 return new UpdateCommand(parameters, botToken, subredditService);
             case CHAT_ID:

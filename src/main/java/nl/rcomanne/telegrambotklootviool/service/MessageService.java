@@ -92,13 +92,12 @@ public class MessageService extends DefaultAbsSender {
                 tryCount++;
                 execute(animation);
                 success = true;
+            } catch (TelegramApiRequestException ex) {
+                log.warn("Reponse code: {}", ex.getErrorCode());
+                log.warn("Response: {}", ex.getApiResponse());
+                log.warn("failed to send animation.", ex);
             } catch (TelegramApiException e) {
-                if (e instanceof TelegramApiRequestException) {
-                    TelegramApiRequestException requestException = (TelegramApiRequestException) e;
-                    log.warn("Reponse code: {}", requestException.getErrorCode());
-                    log.warn("Response: {}", requestException.getApiResponse());
-                }
-                log.warn("failed to send test animation.", e);
+                log.warn("failed to send animation.", e);
             }
         } while (!success && tryCount < 2);
 

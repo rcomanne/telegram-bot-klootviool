@@ -1,5 +1,6 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
+import nl.rcomanne.telegrambotklootviool.domain.InstaItem;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -125,6 +126,25 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
         }
     }
 
+    void sendItem(InstaItem item) {
+        log.debug("sending item '{}' to chat '{}'", item.getId(), this.chatId);
+        if (item.isVideo()) {
+            SendAnimation animation = new SendAnimation()
+                .setChatId(this.chatId)
+                .setAnimation(item.getLink())
+                .setCaption(item.getCaption());
+
+            send(animation);
+        } else {
+            SendPhoto photo = new SendPhoto()
+                .setChatId(this.chatId)
+                .setPhoto(item.getLink())
+                .setCaption(item.getCaption());
+
+            send(photo);
+        }
+    }
+
     private void handleError(Exception exception) {
         log.warn("handling error with item... {}", exception.getMessage(), exception);
         try {
@@ -137,11 +157,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     private boolean sendAsAnimation(SubredditImage image) {
-        if (image.getImageLink().contains(".gif")) {
-            return true;
-        } else {
-            return false;
-        }
+        return image.getImageLink().contains(".gif");
     }
 
     private boolean isNull(SubredditImage image) {

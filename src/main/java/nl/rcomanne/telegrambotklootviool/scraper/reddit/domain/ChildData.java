@@ -50,6 +50,7 @@ public class ChildData {
     private int score;
     private String approvedBy;
     private String thumbnail;
+//    This property sometimes gives us issues converting items - so I commented it out.
 //    private float edited;
     private String authorFlairCssClass;
     private List<String> stewardReports;

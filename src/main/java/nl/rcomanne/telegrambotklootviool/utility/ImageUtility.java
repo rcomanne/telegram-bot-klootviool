@@ -16,7 +16,8 @@ public class ImageUtility {
 
     private static final Pattern GENDER_PATTERN = Pattern.compile(GENDER_REGEX, Pattern.CASE_INSENSITIVE);
 
-    public static void cleanListStream(List<SubredditImage> images) {
+    @SuppressWarnings("squid:S3776")
+    static void cleanListStream(List<SubredditImage> images) {
         images.removeIf(image -> {
             if (image.isNsfw()) {
                 Matcher matcher = GENDER_PATTERN.matcher(image.getTitle());
@@ -39,6 +40,7 @@ public class ImageUtility {
         });
     }
 
+    @SuppressWarnings("squid:S3776")
     public static List<SubredditImage> cleanList(List<SubredditImage> images) {
         int sfwCounter = 0;
         int nsfwCounter = 0;
