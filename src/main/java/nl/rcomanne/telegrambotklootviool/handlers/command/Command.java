@@ -157,7 +157,7 @@ public abstract class Command extends DefaultAbsSender implements Runnable {
     }
 
     private boolean sendAsAnimation(SubredditImage image) {
-        return image.getImageLink().contains(".gif");
+        return false;
     }
 
     private boolean isNull(SubredditImage image) {

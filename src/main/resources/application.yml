@@ -13,6 +13,7 @@ bot:
 
 subreddit:
   list: memes,programmerhumor,gonewild,vsmodels,goddesses,realgirls,biggerthanyouthought,happyembarrasedgirls,ik_ihe,me_irl
+  toremove: midgets,bigdick,bigpussy,slaves,blackslaves,pancakenipples,bigbustywomen,cunt,bbw,bbwgonewild,gapingassholes,goatse
 
 reddit:
   url:
@@ -24,6 +25,3 @@ imgur:
   url:
     base: https://api.imgur.com/3
     subreddit: ${imgur.url.base}/gallery/r
-
-dankmemes:
-  url: https://dankmemes.io/api/images/{subreddit}

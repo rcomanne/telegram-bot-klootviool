@@ -93,8 +93,10 @@ public class SubredditService {
             log.debug("scraped {} items for subreddit {}", items.size(), subredditName);
             items = imageRepository.saveAll(items);
             log.debug("saved {} items for subreddit {}", items.size(), subredditName);
-            subreddit.setLastUpdated(LocalDateTime.now());
-            subredditRepository.save(subreddit);
+            if (!items.isEmpty()) {
+                subreddit.setLastUpdated(LocalDateTime.now());
+                subredditRepository.save(subreddit);
+            }
         } else {
             log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subredditName, subreddit.getLastUpdated());
         }
@@ -146,6 +148,17 @@ public class SubredditService {
             log.debug("subreddit '{}' has been updated in the past week, no need to update", subreddit.getName());
             return new ArrayList<>();
         }
+    }
+
+    public void removeSubredditIfEmpty(Subreddit subreddit) {
+        if (imageRepository.findFirstBySubreddit(subreddit.getName()).isEmpty()) {
+            removeSubreddit(subreddit);
+        }
+    }
+
+    public void removeSubreddit(Subreddit subreddit) {
+        subredditRepository.delete(subreddit);
+        imageRepository.deleteAllBySubreddit(subreddit.getName());
     }
 
     public List<Subreddit> getAllSubreddits() {
