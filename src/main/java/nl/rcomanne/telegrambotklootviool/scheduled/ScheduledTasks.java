@@ -1,8 +1,8 @@
 package nl.rcomanne.telegrambotklootviool.scheduled;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
@@ -40,7 +40,7 @@ public class ScheduledTasks {
             List<SubredditImage> images = redditService.weeklyUpdate(subreddit);
             if (images.isEmpty()) {
                 log.info("no images found for subreddit {} while updating", subreddit);
-                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit %s", subreddit));
+                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit '%s', last updated '%s'", subreddit.getName(), subreddit.getLastUpdated()));
             } else {
                 log.info("updated subreddit {} with {} images", subreddit, images);
                 final int size = images.size();
@@ -62,5 +62,7 @@ public class ScheduledTasks {
                 }
             }
         }
+        subreddits = redditService.getAllSubreddits();
+        messageService.sendMessageRandomPhoto(ME_CHAT_ID, subreddits.stream().map(Subreddit::getName).collect(Collectors.joining(",")));
     }
 }

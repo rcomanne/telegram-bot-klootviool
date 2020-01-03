@@ -113,32 +113,29 @@ public class SubredditService {
         }
     }
 
-    public List<SubredditImage> scrapeAndSave(String subreddit, String window) {
-        final String cleanSubreddit = subreddit.toLowerCase().trim();
+    public List<SubredditImage> scrapeAndSave(String subredditName, String window) {
+        final String cleanSubreddit = subredditName.toLowerCase().trim();
         log.info("scrape and save for {}", cleanSubreddit);
         List<SubredditImage> images = scraper.scrapeSubreddit(cleanSubreddit, window);
-        return cleandAndSave(images, subreddit);
+        return cleandAndSave(images, subredditName);
     }
 
-    public List<SubredditImage> scrapeAndSaveAllTime(String subreddit) {
-        log.info("scraping and saving {} for all time", subreddit);
-        List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, "all");
-        return cleandAndSave(images, subreddit);
+    public List<SubredditImage> scrapeAndSaveAllTime(String subredditName) {
+        final String cleanSubreddit = subredditName.toLowerCase().trim();
+        log.info("scraping and saving {} for all time", cleanSubreddit);
+        List<SubredditImage> images = scraper.scrapeSubreddit(cleanSubreddit, "all");
+        return cleandAndSave(images, subredditName);
     }
 
-    private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final String subreddit) {
-        log.info("saving {} items for {}", images.size(), subreddit);
+    private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final String subredditName) {
+        log.info("saving {} items for {}", images.size(), subredditName);
         List<SubredditImage> cleanList = cleanList(images);
         images = imageRepository.saveAll(cleanList);
-        log.info("saved {} items from subreddit {}", cleanList.size(), subreddit);
+        updateSubredditLastUpdated(subredditName);
+        log.info("saved {} items from subreddit {}", cleanList.size(), subredditName);
         return images;
     }
 
-    public void resetLastUpdatedForSubreddit(String subredditName) {
-        Subreddit subreddit = findOrCreateSubreddit(subredditName);
-        subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
-        subredditRepository.save(subreddit);
-    }
 
     public List<SubredditImage> weeklyUpdate(Subreddit subreddit) {
         if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusWeeks(1))) {
@@ -150,14 +147,29 @@ public class SubredditService {
         }
     }
 
+    private void updateSubredditLastUpdated(String subredditName) {
+        Subreddit subreddit = findOrCreateSubreddit(subredditName);
+        subreddit.setLastUpdated(LocalDateTime.now());
+        subredditRepository.save(subreddit);
+    }
+
+    public void resetLastUpdatedForSubreddit(String subredditName) {
+        Subreddit subreddit = findOrCreateSubreddit(subredditName);
+        subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
+        subredditRepository.save(subreddit);
+    }
+
     public void removeSubredditIfEmpty(Subreddit subreddit) {
         if (imageRepository.findFirstBySubreddit(subreddit.getName()).isEmpty()) {
+            log.debug("Subreddit {} is empty, removing...");
             removeSubreddit(subreddit);
+        } else {
+            log.debug("Subreddit {} is NOT empty, do not remove");
         }
     }
 
     public void removeSubreddit(Subreddit subreddit) {
-        subredditRepository.delete(subreddit);
+        subredditRepository.deleteSubredditByName(subreddit.getName());
         imageRepository.deleteAllBySubreddit(subreddit.getName());
     }
 
