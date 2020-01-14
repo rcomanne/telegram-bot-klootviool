@@ -1,5 +1,6 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 
@@ -9,7 +10,7 @@ import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.ApiContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
@@ -35,51 +36,36 @@ public class MessageService extends DefaultAbsSender {
         return token;
     }
 
-    public void sendRandomPhoto(String chatId) {
-        log.info("sending random photo to chat {}", chatId);
-        int retryCount = 0;
-        boolean success = false;
-        do {
-            retryCount++;
-            SubredditImage image = imageService.findRandom();
-            SendPhoto sendPhoto = new SendPhoto()
-                .setChatId(chatId)
-                .setPhoto(image.getImageLink())
-                .setCaption(image.getTitle());
-            try {
-                execute(sendPhoto);
-                success = true;
-            } catch (TelegramApiException ex) {
-                log.warn("failed to send image {}.", image.getImageLink(), ex);
-            }
-        } while (!success && retryCount < MAX_RETRY_COUNT);
-    }
-
     public void sendMessageRandomPhoto(String chatId, String message) {
         log.info("sending message to {}", chatId);
         SubredditImage image = imageService.findRandom();
         sendMessageWithPhoto(chatId, message, image);
     }
 
-    public void sendMessageWithPhoto(String chatId, String message, SubredditImage image) {
-        log.info("send photo '{}' with message '{}'", image.getImageLink(), message);
-        SendPhoto sendPhoto = new SendPhoto()
-            .setPhoto(image.getImageLink())
-            .setChatId(chatId)
-            .setCaption(message);
-        doSendPhoto(sendPhoto);
+    public void sendMessageRandomPhoto(String chatId, String message, Subreddit subreddit) {
+        log.info("sending message to {}", chatId);
+        SubredditImage image = imageService.findRandomBySubreddit(subreddit.getName());
+        sendMessageWithPhoto(chatId, message, image);
     }
 
-    private void doSendPhoto(SendPhoto sendPhoto) {
+    public void sendMessageWithPhoto(String chatId, String message, SubredditImage image) {
+        log.info("send photo '{}' with message '{}'", image.getImageLink(), message);
+        SendMessage sendPhoto = new SendMessage()
+            .setText(message + "\n" + image.getImageLink())
+            .setChatId(chatId);
+        doSendMessage(sendPhoto);
+    }
+
+    private void doSendMessage(SendMessage message) {
         int retryCount = 0;
         boolean success = false;
         do {
             try {
                 retryCount++;
-                execute(sendPhoto);
+                execute(message);
                 success = true;
             } catch (TelegramApiException ex) {
-                log.warn("failed to send photo with url {}", sendPhoto.getPhoto().getAttachName());
+                log.warn("failed to send message {}", message);
             }
         } while (!success && retryCount < MAX_RETRY_COUNT);
     }

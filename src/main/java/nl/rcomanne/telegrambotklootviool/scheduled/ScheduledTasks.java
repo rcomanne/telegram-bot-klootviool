@@ -40,7 +40,7 @@ public class ScheduledTasks {
             List<SubredditImage> images = redditService.weeklyUpdate(subreddit);
             if (images.isEmpty()) {
                 log.info("no images found for subreddit {} while updating", subreddit);
-                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit '%s', last updated '%s'", subreddit.getName(), subreddit.getLastUpdated()));
+                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit '%s', last updated '%s'", subreddit.getName(), subreddit.getLastUpdated()), subreddit);
             } else {
                 log.info("updated subreddit {} with {} images", subreddit, images);
                 final int size = images.size();

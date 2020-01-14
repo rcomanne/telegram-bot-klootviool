@@ -113,7 +113,7 @@ public class SubredditService {
         }
     }
 
-    public List<SubredditImage> scrapeAndSave(String subredditName, String window) {
+    private List<SubredditImage> scrapeAndSave(String subredditName, String window) {
         final String cleanSubreddit = subredditName.toLowerCase().trim();
         log.info("scrape and save for {}", cleanSubreddit);
         List<SubredditImage> images = scraper.scrapeSubreddit(cleanSubreddit, window);
