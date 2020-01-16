@@ -1,9 +1,9 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -13,8 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -45,6 +43,7 @@ public class MessageService extends DefaultAbsSender {
     public void sendMessageRandomPhoto(String chatId, String message, Subreddit subreddit) {
         log.info("sending message to {}", chatId);
         SubredditImage image = imageService.findRandomBySubreddit(subreddit.getName());
+        assert image != null;
         sendMessageWithPhoto(chatId, message, image);
     }
 

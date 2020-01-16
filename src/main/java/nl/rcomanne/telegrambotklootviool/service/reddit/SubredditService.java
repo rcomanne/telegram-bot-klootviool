@@ -1,21 +1,12 @@
 package nl.rcomanne.telegrambotklootviool.service.reddit;
 
-import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
-import static nl.rcomanne.telegrambotklootviool.utility.SubredditUtility.decideWindow;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditImageRepository;
 import nl.rcomanne.telegrambotklootviool.repositories.SubredditRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.RedditSubredditScraper;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -24,8 +15,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Nullable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
+import static nl.rcomanne.telegrambotklootviool.utility.SubredditUtility.decideWindow;
 
 @Slf4j
 @Service
@@ -56,6 +53,7 @@ public class SubredditService {
         }
     }
 
+    @Nullable
     public SubredditImage findRandomBySubreddit(final String subreddit) {
         final String cleanSubreddit = subreddit.toLowerCase().trim();
         log.info("finding random image from {}", cleanSubreddit);
@@ -161,10 +159,10 @@ public class SubredditService {
 
     public void removeSubredditIfEmpty(Subreddit subreddit) {
         if (imageRepository.findFirstBySubreddit(subreddit.getName()).isEmpty()) {
-            log.debug("Subreddit {} is empty, removing...");
+            log.debug("Subreddit {} is empty, removing...", subreddit.getName());
             removeSubreddit(subreddit);
         } else {
-            log.debug("Subreddit {} is NOT empty, do not remove");
+            log.debug("Subreddit {} is NOT empty, do not remove", subreddit.getName());
         }
     }
 
