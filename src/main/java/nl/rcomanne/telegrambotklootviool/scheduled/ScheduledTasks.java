@@ -37,14 +37,24 @@ public class ScheduledTasks {
         List<Subreddit> subreddits = redditService.getAllSubreddits();
 
         for (Subreddit subreddit : subreddits) {
-            List<SubredditImage> images = redditService.weeklyUpdate(subreddit);
-            if (images.isEmpty()) {
-                log.info("no images found for subreddit {} while updating", subreddit);
-                messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit '%s', last updated '%s'", subreddit.getName(), subreddit.getLastUpdated()), subreddit);
-            } else {
-                log.info("updated subreddit {} with {} images", subreddit, images);
-                final int size = images.size();
-                messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(size - 1)));
+            try {
+                List<SubredditImage> images = redditService.weeklyUpdate(subreddit);
+                if (images.isEmpty()) {
+                    log.info("no images found for subreddit {} while updating", subreddit);
+                    messageService.sendMessageRandomPhoto(ME_CHAT_ID, String.format("no images found - or no scrape executed - for subreddit '%s', last updated '%s'", subreddit.getName(), subreddit.getLastUpdated()), subreddit);
+                } else {
+                    log.info("updated subreddit {} with {} images", subreddit, images);
+                    final int size = images.size();
+                    if (size == 1) {
+                        // if size is 1, we cannot use rand to get a random pic
+                        messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(0));
+                    } else {
+                        // if size is > 1, we need to get a random nr -1 to ensure we do not exceed the nr of elements in the collection (it starts at 0)
+                        messageService.sendMessageWithPhoto(ME_CHAT_ID, String.format("found %d images for subreddit %s", size, subreddit), images.get(random.nextInt(size - 1)));
+                    }
+                }
+            } catch (Exception ex) {
+                messageService.sendMessageRandomPhoto(ME_CHAT_ID, "ExceptionOccured: " + ex.getMessage());
             }
         }
     }
