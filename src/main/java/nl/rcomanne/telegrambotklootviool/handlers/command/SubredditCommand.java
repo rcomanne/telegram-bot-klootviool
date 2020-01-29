@@ -1,25 +1,25 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
-import java.util.List;
-import java.util.Random;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
-
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 class SubredditCommand extends Command {
 
     private final SubredditService service;
     private Random r;
+    private List<String> bannedSubs;
 
     private SubredditCommand(final String botToken, final SubredditService service) {
         super(CommandType.SUBREDDIT, botToken);
         this.service = service;
         this.r = new Random();
+        this.bannedSubs = List.of("bbw", "chubbygonewild");
     }
 
     SubredditCommand(final CommandParameters parameters, final String botToken, final SubredditService service) {
@@ -37,6 +37,13 @@ class SubredditCommand extends Command {
     @Override
     void handleWithQuery() {
         log.debug("handling subreddit command for {}", this.query);
+        for (String banned : bannedSubs) {
+            if (banned.equalsIgnoreCase(this.query)) {
+                sendMessage("Stop it, you filthy animal");
+                return;
+            }
+        }
+
         service.scrapeSubredditAsync(this.query);
         SubredditImage image = service.findRandomBySubreddit(this.query);
         if (image == null) {
