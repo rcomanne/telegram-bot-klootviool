@@ -1,5 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
+import java.util.List;
+
 import nl.rcomanne.telegrambotklootviool.service.GoogleSearchService;
 import nl.rcomanne.telegrambotklootviool.service.instagram.InstagramService;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
@@ -19,12 +21,15 @@ public class CommandFactory {
     @Value("${bot.token}")
     private String botToken;
 
+    @Value("#{'${subreddit.banned}'.split(',')}")
+    private List<String> bannedSubs;
+
     Command create(CommandParameters parameters) {
         switch (parameters.getType()) {
             case PIC:
                 return new PicCommand(parameters, botToken, searchService);
             case SUBREDDIT:
-                return new SubredditCommand(parameters, botToken, subredditService);
+                return new SubredditCommand(parameters, botToken, subredditService, bannedSubs);
             case INSTA:
                 return new InstagramCommand(parameters, botToken, instagramService);
             case UPDATE:

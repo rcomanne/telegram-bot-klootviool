@@ -27,8 +27,8 @@ public class ScheduledTasks {
     private final MessageService messageService;
     private final SubredditService redditService;
 
-    @Value("#{'${subreddit.toremove}'.split(',')}")
-    private List<String> toRemove;
+    @Value("#{'${subreddit.banned}'.split(',')}")
+    private List<String> bannedSubs;
 
 
     @Scheduled(cron = "0 0 4 * * *")
@@ -66,7 +66,7 @@ public class ScheduledTasks {
 
         for (Subreddit subreddit : subreddits) {
             redditService.removeSubredditIfEmpty(subreddit);
-            for (String toRemoveName : toRemove) {
+            for (String toRemoveName : bannedSubs) {
                 if (toRemoveName.equalsIgnoreCase(subreddit.getName())) {
                     redditService.removeSubreddit(subreddit);
                 }

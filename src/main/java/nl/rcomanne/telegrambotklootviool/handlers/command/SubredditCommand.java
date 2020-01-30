@@ -19,13 +19,13 @@ class SubredditCommand extends Command {
         super(CommandType.SUBREDDIT, botToken);
         this.service = service;
         this.r = new Random();
-        this.bannedSubs = List.of("bbw", "chubbygonewild");
     }
 
-    SubredditCommand(final CommandParameters parameters, final String botToken, final SubredditService service) {
+    SubredditCommand(final CommandParameters parameters, final String botToken, final SubredditService service, final List<String> bannedSubs) {
         this(botToken, service);
         this.chatId = parameters.getChatId();
         this.query = parameters.getQuery().orElse(null);
+        this.bannedSubs = bannedSubs;
     }
 
     @Override
@@ -37,11 +37,9 @@ class SubredditCommand extends Command {
     @Override
     void handleWithQuery() {
         log.debug("handling subreddit command for {}", this.query);
-        for (String banned : bannedSubs) {
-            if (banned.equalsIgnoreCase(this.query)) {
-                sendMessage("Stop it, you filthy animal");
-                return;
-            }
+        if (bannedSubs.contains(this.query)) {
+            sendMessage("Stop it, you filthy animal");
+            return;
         }
 
         service.scrapeSubredditAsync(this.query);
