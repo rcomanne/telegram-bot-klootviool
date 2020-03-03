@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: telegram-bot-klootviool
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: klootviool
+      username: klootviool
+
+bot:
+  username: klootviool
+
+subreddit:
+  list: memes,programmerhumor,gonewild,vsmodels,goddesses,realgirls,biggerthanyouthought,happyembarrasedgirls,ik_ihe,me_irl
+  banned: midgets,bigdick,bigpussy,slaves,blackslaves,pancakenipples,bigbustywomen,cunt,bbw,bbwgonewild,gapingassholes,goatse,chubbygonewild,gonewildchubby,fatoroboto
+
+reddit:
+  url:
+    base: https://www.reddit.com/
+    topAfter: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&after={after}
+    topBefore: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&before={before}

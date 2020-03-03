@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      password: test-pw
+
+imgur:
+  clientId: some-client
+
+google:
+  key: some-key
+  cx: some-cx
+
+bot:
+  token: some-token
+
+telegrambots.enabled: false
