@@ -18,6 +18,7 @@
         <java.version>11</java.version>
         <logback.version>1.2.3</logback.version>
         <logback-json.version>0.1.5</logback-json.version>
+        <jackson.version>2.10.3</jackson.version>
         <jaxb.version>2.3.0</jaxb.version>
     </properties>
 
