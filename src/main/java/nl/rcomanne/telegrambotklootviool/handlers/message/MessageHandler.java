@@ -6,6 +6,7 @@ import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageHandler extends DefaultAbsSender {
     @Value("${bot.token}")
     private String botToken;
+
+    @Value("${owner.id}")
+    private int ownerId;
 
     public MessageHandler() {
         super(new DefaultBotOptions());
@@ -26,10 +30,22 @@ public class MessageHandler extends DefaultAbsSender {
     }
 
     public void handle(Update update) {
-        // simple help message
 
-        final String name = update.getMessage().getFrom().getFirstName();
-        final String response = String.format("STFU %s", name);
+        final User from = update.getMessage().getFrom();
+        String response;
+
+        if (from.getBot()) {
+            // no inter bot chats
+            return;
+        }
+
+        if (from.getId().equals(ownerId)) {
+            // specials persons
+            response = String.format("Hello %s, what a retards in this channel, amirite?", from.getFirstName());
+        } else {
+            response = String.format("STFU %s", from.getFirstName());
+        }
+
 
         SendMessage message = new SendMessage()
             .setChatId(update.getMessage().getChatId())
