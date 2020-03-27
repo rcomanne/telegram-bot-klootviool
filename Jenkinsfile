@@ -9,6 +9,7 @@ pipeline {
 
 	triggers {
 		bitbucketPush()
+		githubPush()
 	}
 
 	tools {
