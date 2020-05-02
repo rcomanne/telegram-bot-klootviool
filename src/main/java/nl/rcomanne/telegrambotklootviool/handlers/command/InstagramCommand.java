@@ -1,9 +1,8 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
 
-import nl.rcomanne.telegrambotklootviool.service.instagram.InstagramService;
-
 import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.service.instagram.InstagramService;
 
 @Slf4j
 public class InstagramCommand extends Command {
@@ -26,7 +25,6 @@ public class InstagramCommand extends Command {
     @Override
     void handleWithQuery() {
         log.debug("handling Instagram command for {}", this.query);
-        sendItem(service.getRandomImageFromAccount(this.query));
-        service.scrapeInstaAsync(this.query);
+        sendItem(service.getRandomImageFromAccount(this.query, this.chatId));
     }
 }

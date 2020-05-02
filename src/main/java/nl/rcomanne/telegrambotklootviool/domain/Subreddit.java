@@ -1,19 +1,26 @@
 package nl.rcomanne.telegrambotklootviool.domain;
 
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.Builder;
-import lombok.Data;
-
+@Entity
 @Builder
-@Data
-@Document(collection = "subreddits")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public class Subreddit {
     @Id
     private String name;
     private LocalDateTime lastUpdated;
+
+    @OneToMany
+    private List<SubredditImage> images;
 
 }

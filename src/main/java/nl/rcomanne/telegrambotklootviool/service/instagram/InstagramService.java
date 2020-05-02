@@ -1,109 +1,105 @@
 package nl.rcomanne.telegrambotklootviool.service.instagram;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.rcomanne.telegrambotklootviool.domain.InstaAccount;
 import nl.rcomanne.telegrambotklootviool.domain.InstaItem;
 import nl.rcomanne.telegrambotklootviool.repositories.InstaAccountRepository;
 import nl.rcomanne.telegrambotklootviool.repositories.InstaItemRepository;
-
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SampleOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
+import nl.rcomanne.telegrambotklootviool.service.MessageService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class InstagramService {
 
-    private static final String INSTAGRAM_KEY = "instagram";
-    private static final String INSTA_ACCOUNT_KEY = "fromUser";
-    private static final int SAMPLE_SIZE = 5;
-
     private final Random r = new Random();
 
     private final InstagramScraper scraper;
 
     private final InstaAccountRepository accountRepository;
-    private final InstaItemRepository repository;
-    private final MongoTemplate template;
+    private final InstaItemRepository itemRepository;
+
+    private final MessageService messageService;
 
     public InstaItem getRandomImage() {
-        log.debug("retrieving random instagram image");
-        SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
-        Aggregation aggregation = Aggregation.newAggregation(sampleStage);
-        return getItem(aggregation);
+        log.info("retrieving random instagram image");
+        List<InstaItem> allItems = itemRepository.findAll();
+        Collections.shuffle(allItems);
+        int index = r.nextInt(allItems.size());
+        return allItems.get(index);
     }
 
-    public InstaItem getRandomImageFromAccount(String instaAccount) {
-        log.debug("retrieving random image from InstaAccount: {}", instaAccount);
+    public InstaItem getRandomImageFromAccount(String accountName, long chatId) {
+        log.info("retrieving random image from InstaAccount: {}", accountName);
 
-        // create match operations for MongoTemplate retrieval, as this run on Rabobank, we do not want any NSFW images
-        // match the given Instagram Account
-        MatchOperation instaFilter = Aggregation.match(new Criteria(INSTA_ACCOUNT_KEY).is(instaAccount));
-        // retrieve a sample of size SAMPLE_SIZE, this is a sort of random retrieval
-        SampleOperation sampleStage = Aggregation.sample(SAMPLE_SIZE);
-        // combine the operations into an aggregation filter
-        Aggregation aggregation = Aggregation.newAggregation(instaFilter, sampleStage);
-
-        try {
-            return getItem(aggregation);
-        } catch (IllegalArgumentException ex) {
-            // no entries found for account, scrape and save from account and then try to return again
-            log.warn("nothing found for InstaAccount: {}, start scraping", instaAccount);
-            List<InstaItem> items = scraper.scrapeAccount(instaAccount);
-            if (!items.isEmpty()) {
-                log.debug("retrieved '{}' items from insta account '{}'", items.size(), instaAccount);
-                repository.saveAll(items);
-                return getItem(aggregation);
-            } else {
-                log.debug("no items found for insta account '{}'", instaAccount);
-                throw new IllegalArgumentException("no items found for insta account " + instaAccount);
-            }
+        InstaAccount account;
+        if (accountRepository.existsByUsername(accountName)) {
+            log.debug("Instagram account is known");
+            account = findInstaAccount(accountName);
+        } else {
+            log.debug("Instagram account is unknown");
+            account = createInstaAccount(accountName);
         }
+
+        List<InstaItem> foundItems = itemRepository.findAllByAccount(account);
+        if (foundItems.isEmpty()) {
+            log.debug("No items found for account {}, scraping", account.getUsername());
+            messageService.sendMessage(String.valueOf(chatId), String.format("No items found for %s, scraping now, this could take some time", account.getUsername()));
+            List<InstaItem> newItems = scraper.scrapeAccount(account);
+            if (newItems.isEmpty()) {
+                throw new IllegalArgumentException("No items found for Instagram " + account.getUsername());
+            } else {
+                itemRepository.saveAll(newItems);
+                account.setLastUpdated(LocalDateTime.now());
+                accountRepository.save(account);
+            }
+        } else {
+            scrapeInstaAsync(account);
+        }
+        log.debug("Found entries for account {}", accountName);
+        Collections.shuffle(foundItems);
+        int index = r.nextInt(foundItems.size());
+        return foundItems.get(index);
     }
 
     @Async
-    public void scrapeInstaAsync(String accountName) {
-        InstaAccount account = findOrCreateInstaAccount(accountName);
-
+    public void scrapeInstaAsync(InstaAccount account) {
         if (account.getLastUpdated().isAfter(LocalDateTime.now().minusWeeks(1))) {
-            log.debug("Instagram Account '{}' has been updated at '{}', no need to update", account.getName(), account.getLastUpdated());
+            log.debug("Instagram Account '{}' has been updated at '{}', no need to update", account.getUsername(), account.getLastUpdated());
             return;
         }
 
-        log.debug("scraping insta account '{}' async", accountName);
-        List<InstaItem> items = scraper.scrapeAccount(accountName);
-        log.debug("scraped and save {} items for insta account {}", items.size(), accountName);
-        repository.saveAll(items);
+        log.debug("scraping insta account '{}' async", account);
+        List<InstaItem> items = scraper.scrapeAccount(account);
+        log.debug("scraped and save {} items for insta account {}", items.size(), account);
+        itemRepository.saveAll(items);
+        account.setLastUpdated(LocalDateTime.now());
+        accountRepository.save(account);
     }
 
-    private InstaAccount findOrCreateInstaAccount(String accountName) {
-        return accountRepository.findById(accountName)
-            .orElse(accountRepository.save(InstaAccount.builder()
-                .name(accountName)
-                .lastUpdated(LocalDateTime.now().minusMonths(1))
-                .build()));
+    private InstaAccount findInstaAccount(String accountName) {
+        return accountRepository.findById(accountName).orElseThrow(() -> new IllegalStateException("InstaAccount not found"));
     }
 
-    private InstaItem getItem(Aggregation aggregation) {
-        log.debug("getting item from Instagram account with aggregation");
-        List<InstaItem> items = template.aggregate(aggregation, INSTAGRAM_KEY, InstaItem.class)
-            .getMappedResults();
-        if (items.isEmpty()) {
-            // received null
-            throw new IllegalArgumentException("no items found!");
+    private InstaAccount createInstaAccount(String accountName) {
+        if (accountRepository.existsByUsername(accountName)) {
+            throw new IllegalStateException("Account with that username already exists");
         } else {
-            return items.get(r.nextInt(items.size()));
+            return accountRepository.save(
+                    InstaAccount.builder()
+                            .username(accountName)
+                            .items(new ArrayList<>())
+                            .build()
+            );
         }
     }
 }

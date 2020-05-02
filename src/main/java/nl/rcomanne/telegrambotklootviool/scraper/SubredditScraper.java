@@ -1,10 +1,11 @@
 package nl.rcomanne.telegrambotklootviool.scraper;
 
-import java.util.List;
-
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 
+import java.util.List;
+
 public interface SubredditScraper {
-    List<SubredditImage> scrapeSubreddit(String subreddit, String window);
+    List<SubredditImage> scrapeSubreddit(Subreddit subreddit, String window);
 
 }

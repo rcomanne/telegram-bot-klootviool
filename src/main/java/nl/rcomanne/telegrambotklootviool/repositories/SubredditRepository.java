@@ -1,11 +1,15 @@
 package nl.rcomanne.telegrambotklootviool.repositories;
 
 import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import java.util.List;
 
-public interface SubredditRepository extends MongoRepository<Subreddit, String> {
+public interface SubredditRepository extends CrudRepository<Subreddit, String> {
 
     void deleteSubredditByName(String name);
+    @NonNull
+    List<Subreddit> findAll();
 
 }

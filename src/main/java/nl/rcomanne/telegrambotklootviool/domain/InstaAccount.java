@@ -1,20 +1,26 @@
 package nl.rcomanne.telegrambotklootviool.domain;
 
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.Builder;
-import lombok.Data;
-
-@Data
+@Entity
 @Builder
-@Document(collection = "available_insta_accounts")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public class InstaAccount {
 
     @Id
-    private String name;
+    private String username;
     private LocalDateTime lastUpdated;
 
+    @OneToMany
+    private List<InstaItem> items;
 }

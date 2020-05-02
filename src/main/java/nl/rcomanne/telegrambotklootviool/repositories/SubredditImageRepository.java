@@ -1,14 +1,21 @@
 package nl.rcomanne.telegrambotklootviool.repositories;
 
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
+import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
+
+import java.util.List;
 import java.util.Optional;
 
-import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+public interface SubredditImageRepository extends CrudRepository<SubredditImage, String> {
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+    Optional<SubredditImage> findFirstBySubreddit(Subreddit subreddit);
 
-public interface SubredditImageRepository extends MongoRepository<SubredditImage, String> {
+    @NonNull
+    List<SubredditImage> findAll();
 
-    Optional<SubredditImage> findFirstBySubreddit(String subreddit);
+    List<SubredditImage> findAllBySubreddit(Subreddit subreddit);
 
-    void deleteAllBySubreddit(String subreddit);
+    void deleteAllBySubreddit(Subreddit subreddit);
 }

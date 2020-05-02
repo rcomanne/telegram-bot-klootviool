@@ -1,15 +1,13 @@
 package nl.rcomanne.telegrambotklootviool.handlers.command;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import nl.rcomanne.telegrambotklootviool.service.GoogleSearchService;
 import nl.rcomanne.telegrambotklootviool.service.instagram.InstagramService;
 import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -32,8 +30,6 @@ public class CommandFactory {
                 return new SubredditCommand(parameters, botToken, subredditService, bannedSubs);
             case INSTA:
                 return new InstagramCommand(parameters, botToken, instagramService);
-            case UPDATE:
-                return new UpdateCommand(parameters, botToken, subredditService);
             case CHAT_ID:
                 return new ChatIdCommand(parameters, botToken);
             default:

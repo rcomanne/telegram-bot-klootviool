@@ -6,19 +6,16 @@ import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.List;
-import java.util.Random;
 
 @Slf4j
 class SubredditCommand extends Command {
 
     private final SubredditService service;
-    private Random r;
     private List<String> bannedSubs;
 
     private SubredditCommand(final String botToken, final SubredditService service) {
         super(CommandType.SUBREDDIT, botToken);
         this.service = service;
-        this.r = new Random();
     }
 
     SubredditCommand(final CommandParameters parameters, final String botToken, final SubredditService service, final List<String> bannedSubs) {
@@ -42,20 +39,12 @@ class SubredditCommand extends Command {
             return;
         }
 
-        service.scrapeSubredditAsync(this.query);
-        SubredditImage image = service.findRandomBySubreddit(this.query);
-        if (image == null) {
-            sendMessage("No images found for subreddit '" + this.query + "', trying to scrape now");
-            List<SubredditImage> retrievedImages = service.scrapeAndSaveAllTime(this.query);
-            if (retrievedImages.isEmpty()) {
-                sendMessage("No images found for subreddit '" + this.query + "'");
-            } else {
-                sendItem(retrievedImages.get(r.nextInt(retrievedImages.size())));
-            }
-        } else {
-            sendItem(image);
-            service.scrapeSubredditAsync(this.query);
+        if (!service.subredditExistsAndHasItems(this.query)) {
+            sendMessage(String.format("No images found for %s, trying to scrape now", this.query));
         }
+
+        SubredditImage image = service.findRandomBySubreddit(this.query, String.valueOf(this.chatId));
+        sendItem(image);
     }
 
     private void sendMessage(String text) {

@@ -1,18 +1,19 @@
 package nl.rcomanne.telegrambotklootviool.scraper.reddit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.domain.Child;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.domain.ChildData;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
 
 public class RedditSubredditScraperTest {
     private RestTemplate restTemplate;
@@ -45,8 +46,8 @@ public class RedditSubredditScraperTest {
 
         entries.add(child);
 
-
-        List<SubredditImage> images = sut.convertItems("test", entries);
+        Subreddit subreddit = new Subreddit("test", LocalDateTime.now().minusMonths(1), new ArrayList<>());
+        List<SubredditImage> images = sut.convertItems(subreddit, entries);
         assertFalse(images.get(0).isAnimated());
     }
 }

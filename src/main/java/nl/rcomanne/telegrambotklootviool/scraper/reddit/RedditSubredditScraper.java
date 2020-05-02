@@ -1,14 +1,14 @@
 package nl.rcomanne.telegrambotklootviool.scraper.reddit;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.annotations.VisibleForTesting;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
 import nl.rcomanne.telegrambotklootviool.scraper.SubredditScraper;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.domain.Child;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.domain.ChildData;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.domain.RedditSubredditResponse;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.annotations.VisibleForTesting;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -34,7 +32,7 @@ public class RedditSubredditScraper implements SubredditScraper {
     private final RestTemplate restTemplate;
 
     @Override
-    public List<SubredditImage> scrapeSubreddit(String subreddit, String window) {
+    public List<SubredditImage> scrapeSubreddit(Subreddit subreddit, String window) {
         log.debug("start scraping subreddit '{}' from Reddit API", subreddit);
         int request = 0;
         String after = "";
@@ -46,7 +44,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                     return images;
                 }
                 request++;
-                RedditSubredditResponse response = retrieveItems(subreddit, window, after);
+                RedditSubredditResponse response = retrieveItems(subreddit.getName(), window, after);
                 if (response.getData() == null || response.getData().getChildren().isEmpty()) {
                     // got empty page - no more images
                     log.debug("received empty response - stopping and saving");
@@ -65,9 +63,9 @@ public class RedditSubredditScraper implements SubredditScraper {
         return images;
     }
 
-    private RedditSubredditResponse retrieveItems(String subreddit, String window, String after) {
+    private RedditSubredditResponse retrieveItems(String subredditName, String window, String after) {
         final String url = baseUrl
-            .replace("{subreddit}", subreddit)
+            .replace("{subreddit}", subredditName)
             .replace("{window}", window)
             .replace("{limit}", Integer.toString(DEFAULT_LIMIT))
             .replace("{after}", after);
@@ -95,7 +93,7 @@ public class RedditSubredditScraper implements SubredditScraper {
     }
 
     @VisibleForTesting
-    List<SubredditImage> convertItems(String subreddit, List<Child> entries) {
+    List<SubredditImage> convertItems(Subreddit subreddit, List<Child> entries) {
         final List<SubredditImage> convertedItems = new ArrayList<>(entries.size());
         for (Child child : entries) {
             try {

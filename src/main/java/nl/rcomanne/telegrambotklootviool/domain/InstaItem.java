@@ -1,17 +1,20 @@
 package nl.rcomanne.telegrambotklootviool.domain;
 
+import lombok.*;
+import org.springframework.data.annotation.Transient;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.Builder;
-import lombok.Data;
-
-@Data
+@Entity
 @Builder
-@Document(collection = "instagram")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public class InstaItem implements Serializable {
 
     @Transient
@@ -22,7 +25,9 @@ public class InstaItem implements Serializable {
     private String link;
     private boolean isVideo;
     private String caption;
-    private String fromUser;
     private int likes;
+
+    @ManyToOne
+    private InstaAccount account;
 
 }

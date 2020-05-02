@@ -1,11 +1,8 @@
 package nl.rcomanne.telegrambotklootviool.repositories;
 
-
 import nl.rcomanne.telegrambotklootviool.domain.InstaAccount;
+import org.springframework.data.repository.CrudRepository;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-public interface InstaAccountRepository extends MongoRepository<InstaAccount, String> {
-
-    boolean existsByName(String accountName);
+public interface InstaAccountRepository extends CrudRepository<InstaAccount, String> {
+    boolean existsByUsername(String username);
 }

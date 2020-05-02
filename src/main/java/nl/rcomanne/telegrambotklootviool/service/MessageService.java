@@ -42,9 +42,17 @@ public class MessageService extends DefaultAbsSender {
 
     public void sendMessageRandomPhoto(String chatId, String message, Subreddit subreddit) {
         log.info("sending message to {}", chatId);
-        SubredditImage image = imageService.findRandomBySubreddit(subreddit.getName());
+        SubredditImage image = imageService.findRandomBySubreddit(subreddit.getName(), chatId);
         assert image != null;
         sendMessageWithPhoto(chatId, message, image);
+    }
+
+    public void sendMessage(String chatId, String message) {
+        log.info("sending message to {}", chatId);
+        SendMessage sendMessage = new SendMessage()
+                .setChatId(chatId)
+                .setText(message);
+        doSendMessage(sendMessage);
     }
 
     public void sendMessageWithPhoto(String chatId, String message, SubredditImage image) {
