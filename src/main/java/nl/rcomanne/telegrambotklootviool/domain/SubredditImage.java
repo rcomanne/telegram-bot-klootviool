@@ -19,11 +19,13 @@ public class SubredditImage implements Serializable {
 
     @Id
     private String id;
+    @Lob
     private String title;
     private String imageLink;
     private boolean animated;
     private boolean nsfw;
     private long score;
+    @Lob
     private String source;
 
     @ManyToOne(fetch = FetchType.LAZY)

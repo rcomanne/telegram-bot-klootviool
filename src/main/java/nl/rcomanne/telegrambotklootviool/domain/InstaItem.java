@@ -23,6 +23,7 @@ public class InstaItem implements Serializable {
     private long id;
     private String link;
     private boolean isVideo;
+    @Lob
     private String caption;
     private int likes;
 

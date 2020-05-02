@@ -11,3 +11,7 @@ do
 	echo "return code: ${ret}"
 	let i=${i}+1
 done
+
+if [ "${ret}" -ne "200" ]; then
+  echo "Failed to talk to the service"
+fi
