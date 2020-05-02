@@ -5,7 +5,7 @@ logging:
   config: file:/var/opt/services/telegram-bot-klootviool/logback.xml
 
 spring:
-    datasource:
+  datasource:
       url: jdbc:postgresql://localhost:5432/klootviool
   devtools:
     add-properties: false
