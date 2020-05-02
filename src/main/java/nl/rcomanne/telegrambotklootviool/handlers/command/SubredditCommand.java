@@ -43,7 +43,7 @@ class SubredditCommand extends Command {
             sendMessage(String.format("No images found for %s, trying to scrape now", this.query));
         }
 
-        SubredditImage image = service.findRandomBySubreddit(this.query, String.valueOf(this.chatId));
+        SubredditImage image = service.findRandomBySubreddit(this.query);
         sendItem(image);
     }
 

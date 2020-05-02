@@ -23,8 +23,7 @@ public class InstaItem implements Serializable {
     private long id;
     private String link;
     private boolean isVideo;
-    @Lob
-    private String caption;
+    @Column(length = 512) private String caption;
     private int likes;
 
     @ManyToOne(fetch = FetchType.LAZY)

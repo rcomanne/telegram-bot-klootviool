@@ -10,7 +10,6 @@ import nl.rcomanne.telegrambotklootviool.scraper.reddit.RedditSubredditScraper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +41,7 @@ public class SubredditService {
         }
     }
 
-    @Nullable
-    public SubredditImage findRandomBySubreddit(final String subredditName, final String chatId) {
+    public SubredditImage findRandomBySubreddit(final String subredditName) {
         final String cleanSubreddit = subredditName.toLowerCase().trim();
         log.info("finding random image from {}", cleanSubreddit);
 
@@ -173,8 +171,10 @@ public class SubredditService {
     public boolean subredditExistsAndHasItems(String subredditName) {
         try {
             Subreddit foundSubreddit = findSubreddit(subredditName);
-            imageRepository.findFirstBySubreddit(foundSubreddit).orElseThrow(IllegalStateException::new);
-        } catch (Exception ex) {
+            imageRepository.findFirstBySubreddit(foundSubreddit).orElseThrow(() -> new IllegalStateException("no images found for subreddit " + subredditName));
+        } catch (IllegalStateException ex) {
+            log.info("subreddit {} not found, or empty", subredditName);
+            log.debug("Exception: {}", ex.getMessage(), ex);
             return false;
         }
         return true;
