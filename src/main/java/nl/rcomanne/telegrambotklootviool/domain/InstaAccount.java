@@ -2,13 +2,12 @@ package nl.rcomanne.telegrambotklootviool.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+@Entity(name = "InstaAccount")
+@Table(name = "insta_account")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +20,10 @@ public class InstaAccount {
     private String username;
     private LocalDateTime lastUpdated;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "account",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<InstaItem> items;
 }

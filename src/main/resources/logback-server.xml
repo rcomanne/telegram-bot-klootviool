@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+
+    <springProperty name="log_file_name" source="logging.file.name"/>
+    <springProperty name="app_name" source="spring.application.name"/>
+
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
+        <file>${log_file_name}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>
+            <fileNamePattern>${log_file_name}.%d{yyyy-MM-dd}</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
 
@@ -11,7 +15,7 @@
             <shortenedLoggerNameLength>16</shortenedLoggerNameLength>
             <customFields>
                 {
-                    "app": "telegram-bot-klootviool"
+                    "app": "${app_name}"
                 }
             </customFields>
         </encoder>

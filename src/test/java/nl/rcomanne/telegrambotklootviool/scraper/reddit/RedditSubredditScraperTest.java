@@ -46,7 +46,7 @@ public class RedditSubredditScraperTest {
 
         entries.add(child);
 
-        Subreddit subreddit = new Subreddit("test", LocalDateTime.now().minusMonths(1), new ArrayList<>());
+        Subreddit subreddit = new Subreddit("test", LocalDateTime.now().minusMonths(1), 0L, new ArrayList<>());
         List<SubredditImage> images = sut.convertItems(subreddit, entries);
         assertFalse(images.get(0).isAnimated());
     }

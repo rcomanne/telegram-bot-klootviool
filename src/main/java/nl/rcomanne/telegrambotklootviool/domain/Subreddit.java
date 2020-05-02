@@ -2,13 +2,12 @@ package nl.rcomanne.telegrambotklootviool.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+@Entity(name = "Subreddit")
+@Table(name = "subreddit")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,8 +18,13 @@ public class Subreddit {
     @Id
     private String name;
     private LocalDateTime lastUpdated;
+    private long lowestFromAll;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "subreddit",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<SubredditImage> images;
 
 }

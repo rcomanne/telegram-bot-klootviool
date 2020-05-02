@@ -2,13 +2,11 @@ package nl.rcomanne.telegrambotklootviool.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
+@Entity(name = "SubredditImage")
+@Table(name = "subreddit_image")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +26,6 @@ public class SubredditImage implements Serializable {
     private long score;
     private String source;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Subreddit subreddit;
 }

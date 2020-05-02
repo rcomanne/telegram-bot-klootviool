@@ -1,12 +1,6 @@
 spring:
   application:
     name: telegram-bot-klootviool
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: klootviool
-      username: klootviool
 
 bot:
   username: klootviool

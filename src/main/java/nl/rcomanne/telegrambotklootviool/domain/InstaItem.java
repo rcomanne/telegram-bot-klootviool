@@ -3,12 +3,11 @@ package nl.rcomanne.telegrambotklootviool.domain;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
+@Entity(name = "InstaItem")
+@Table(name = "insta_item")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +26,7 @@ public class InstaItem implements Serializable {
     private String caption;
     private int likes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private InstaAccount account;
 
 }

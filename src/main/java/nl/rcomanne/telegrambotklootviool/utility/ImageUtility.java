@@ -1,13 +1,13 @@
 package nl.rcomanne.telegrambotklootviool.utility;
 
+import lombok.extern.slf4j.Slf4j;
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
+import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ImageUtility {
@@ -41,16 +41,24 @@ public class ImageUtility {
     }
 
     @SuppressWarnings("squid:S3776")
-    public static List<SubredditImage> cleanList(List<SubredditImage> images) {
+    public static List<SubredditImage> cleanList(List<SubredditImage> images, Subreddit subreddit) {
         int sfwCounter = 0;
         int nsfwCounter = 0;
         int maleCounter = 0;
         int femaleCounter = 0;
         int noMatchCounter = 0;
+        int belowThreshold = 0;
 
         List<SubredditImage> cleanList = new ArrayList<>();
 
+        long scoreThreshold = subreddit.getLowestFromAll();
         for (SubredditImage image : images) {
+            if (image.getScore() < subreddit.getLowestFromAll()) {
+                log.debug("image {} with score {} is below threshold of {}", image.getId(), image.getScore(), scoreThreshold);
+                belowThreshold++;
+                break;
+            }
+
             if (image.isNsfw()) {
                 nsfwCounter++;
                 Matcher matcher = GENDER_PATTERN.matcher(image.getTitle());
@@ -81,7 +89,7 @@ public class ImageUtility {
                 sfwCounter++;
             }
         }
-        log.info("cleaned {} SFW items and {} NSFW items, of those {} were male, {} were female, {} of those were no match", sfwCounter, nsfwCounter, maleCounter, femaleCounter, noMatchCounter);
+        log.info("cleaned {} SFW items and {} NSFW items, of those {} were male, {} were female, {} of those were no match, {} were below threshold", sfwCounter, nsfwCounter, maleCounter, femaleCounter, noMatchCounter, belowThreshold);
         return cleanList;
     }
 

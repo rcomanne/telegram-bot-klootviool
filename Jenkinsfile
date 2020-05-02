@@ -33,7 +33,10 @@ pipeline {
 
 		stage('Deploy') {
 			when {
-				branch 'master'
+				anyOff {
+					branch 'master'
+					branch 'postgres'
+				}
 			}
 			steps {
 				sh "./scripts/cleanup.sh"

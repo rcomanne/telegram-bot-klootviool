@@ -1,18 +1,18 @@
 package nl.rcomanne.telegrambotklootviool.utility;
 
-import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
-import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanListStream;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
+import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanList;
+import static nl.rcomanne.telegrambotklootviool.utility.ImageUtility.cleanListStream;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class ImageUtilityTest {
@@ -43,7 +43,13 @@ public class ImageUtilityTest {
             nsfwMaleBrackets, nsfwMaleBracketsL, nsfwMalePar, nsfwMaleParL, nonNsfwMale
         ));
 
-        List<SubredditImage> cleanList = cleanList(images);
+        Subreddit subreddit = Subreddit.builder()
+                .name("test")
+                .images(new ArrayList<>())
+                .lowestFromAll(100L)
+                .build();
+
+        List<SubredditImage> cleanList = cleanList(images, subreddit);
 
         assertTrue(cleanList.contains(emptyTitle));
         assertTrue(cleanList.contains(nsfwEmptyTitle));

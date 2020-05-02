@@ -1,11 +1,17 @@
 logging:
-  path: /var/opt/services/logs
-  file: ${logging.path}/telegram-bot-klootviool.log
+  file:
+    path: /var/opt/services/logs
+    name: ${logging.file.path}/telegram-bot-klootviool.log
   config: file:/var/opt/services/telegram-bot-klootviool/logback.xml
 
 spring:
+    datasource:
+      url: jdbc:postgresql://localhost:5432/klootviool
   devtools:
     add-properties: false
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 server:
   port: 8101

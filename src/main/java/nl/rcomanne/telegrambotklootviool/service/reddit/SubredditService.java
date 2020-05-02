@@ -51,7 +51,7 @@ public class SubredditService {
         List<SubredditImage> images = imageRepository.findAllBySubreddit(subreddit);
 
         if (images.isEmpty()) {
-            scrapeAndSaveAllTime(subreddit);
+            images = scrapeAndSaveAllTime(subreddit);
         } else {
             scrapeSubredditAsync(subreddit);
         }
@@ -64,15 +64,14 @@ public class SubredditService {
     public void scrapeSubredditAsync(Subreddit subreddit) {
         log.debug("scraping and saving async for subreddit: '{}'", subreddit.getName());
 
-        if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusWeeks(1))) {
-            log.info("subreddit '{}' update has been more than one week ago, updating now...", subreddit);
+        if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusDays(1))) {
+            log.info("subreddit '{}' update has been more than one day ago, updating now...", subreddit);
 
             final String window = decideWindow(subreddit.getLastUpdated());
             List<SubredditImage> items = scraper.scrapeSubreddit(subreddit, window);
 
             log.debug("scraped {} items for subreddit {}", items.size(), subreddit);
-            items = cleandAndSave(items, subreddit);
-            log.debug("saved {} items for subreddit {}", items.size(), subreddit);
+            cleandAndSave(items, subreddit);
         } else {
             log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit, subreddit.getLastUpdated());
         }
@@ -104,21 +103,28 @@ public class SubredditService {
 
     public List<SubredditImage> scrapeAndSaveAllTime(String subredditName) {
         log.info("scraping and saving {} for all time", subredditName);
-        Subreddit subreddit = findOrCreateSubreddit(subredditName);
-        List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, "all");
-        return cleandAndSave(images, subreddit);
+        return scrapeAndSaveAllTime(findOrCreateSubreddit(subredditName));
     }
 
     private List<SubredditImage> scrapeAndSaveAllTime(Subreddit subreddit) {
         log.info("scraping and saving {} for all time", subreddit.getName());
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, "all");
+        subreddit.setLowestFromAll(getLowestScore(images));
+        log.debug("lowest score for subreddit {} is {}", subreddit.getName(), subreddit.getLowestFromAll());
         return cleandAndSave(images, subreddit);
+    }
+
+    private long getLowestScore(List<SubredditImage> images) {
+        long lowest = Integer.MAX_VALUE;
+        for (SubredditImage image : images) {
+            lowest = Math.min(image.getScore(), lowest);
+        }
+        return lowest;
     }
 
     private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final Subreddit subreddit) {
         log.info("saving {} items for {}", images.size(), subreddit.getName());
-        images = cleanList(images);
-        List<SubredditImage> cleanList = cleanList(images);
+        List<SubredditImage> cleanList = cleanList(images, subreddit);
         imageRepository.saveAll(cleanList);
         updateSubredditLastUpdated(subreddit);
         log.info("saved {} items from subreddit {}", cleanList.size(), subreddit.getName());
