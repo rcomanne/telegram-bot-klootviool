@@ -33,7 +33,7 @@ pipeline {
 
 		stage('Deploy') {
 			when {
-				anyOff {
+				anyOf {
 					branch 'master'
 					branch 'postgres'
 				}
