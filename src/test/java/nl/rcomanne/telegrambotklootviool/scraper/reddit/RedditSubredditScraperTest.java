@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,13 @@ public class RedditSubredditScraperTest {
 
         entries.add(child);
 
-        Subreddit subreddit = new Subreddit("test", LocalDateTime.now().minusMonths(1), 0L, new ArrayList<>());
+        Subreddit subreddit = Subreddit.builder()
+                .name("test")
+                .images(new ArrayList<>())
+                .lowestFromAll(200L)
+                .threshold(100L)
+                .build();
+
         List<SubredditImage> images = sut.convertItems(subreddit, entries);
         assertFalse(images.get(0).isAnimated());
     }

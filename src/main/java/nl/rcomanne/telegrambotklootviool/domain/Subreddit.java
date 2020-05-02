@@ -19,6 +19,7 @@ public class Subreddit {
     private String name;
     private LocalDateTime lastUpdated;
     private long lowestFromAll;
+    private long threshold;
 
     @OneToMany(
             mappedBy = "subreddit",

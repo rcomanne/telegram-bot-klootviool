@@ -17,8 +17,12 @@ public class ImageUtility {
     private static final Pattern GENDER_PATTERN = Pattern.compile(GENDER_REGEX, Pattern.CASE_INSENSITIVE);
 
     @SuppressWarnings("squid:S3776")
-    static void cleanListStream(List<SubredditImage> images) {
+    static void cleanListStream(List<SubredditImage> images, Subreddit subreddit) {
+        long scoreThreshold = subreddit.getThreshold();
         images.removeIf(image -> {
+            if (image.getScore() < scoreThreshold) {
+                return true;
+            }
             if (image.isNsfw()) {
                 Matcher matcher = GENDER_PATTERN.matcher(image.getTitle());
                 if (matcher.find()) {
@@ -51,9 +55,9 @@ public class ImageUtility {
 
         List<SubredditImage> cleanList = new ArrayList<>();
 
-        long scoreThreshold = subreddit.getLowestFromAll();
+        long scoreThreshold = subreddit.getThreshold();
         for (SubredditImage image : images) {
-            if (image.getScore() < subreddit.getLowestFromAll()) {
+            if (image.getScore() < scoreThreshold) {
                 log.debug("image {} with score {} is below threshold of {}", image.getId(), image.getScore(), scoreThreshold);
                 belowThreshold++;
                 continue;

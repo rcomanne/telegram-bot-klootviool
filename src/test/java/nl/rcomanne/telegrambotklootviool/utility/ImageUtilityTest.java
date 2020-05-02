@@ -54,7 +54,8 @@ public class ImageUtilityTest {
         Subreddit subreddit = Subreddit.builder()
                 .name("test")
                 .images(new ArrayList<>())
-                .lowestFromAll(100L)
+                .lowestFromAll(200L)
+                .threshold(100L)
                 .build();
 
         List<SubredditImage> cleanList = cleanList(images, subreddit);
@@ -117,7 +118,14 @@ public class ImageUtilityTest {
             imageUnderThresholdScore, imageOnThresholdScore, imageOverThresholdScore
         ));
 
-        cleanListStream(images);
+        Subreddit subreddit = Subreddit.builder()
+                .name("test")
+                .images(new ArrayList<>())
+                .lowestFromAll(200L)
+                .threshold(100L)
+                .build();
+
+        cleanListStream(images, subreddit);
 
         assertTrue(images.contains(emptyTitle));
         assertTrue(images.contains(nsfwEmptyTitle));
@@ -137,9 +145,9 @@ public class ImageUtilityTest {
 
         assertTrue(images.contains(nonNsfwMale));
 
-//        assertFalse(images.contains(imageUnderThresholdScore));
-//        assertTrue(images.contains(imageOnThresholdScore));
-//        assertTrue(images.contains(imageOverThresholdScore));
+        assertFalse(images.contains(imageUnderThresholdScore));
+        assertTrue(images.contains(imageOnThresholdScore));
+        assertTrue(images.contains(imageOverThresholdScore));
     }
 
     private SubredditImage generateImage(String title, boolean nsfw) {

@@ -108,6 +108,7 @@ public class SubredditService {
         log.info("scraping and saving {} for all time", subreddit.getName());
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, "all");
         subreddit.setLowestFromAll(getLowestScore(images));
+        subreddit.setThreshold(subreddit.getLowestFromAll() / 2);
         log.debug("lowest score for subreddit {} is {}", subreddit.getName(), subreddit.getLowestFromAll());
         return cleandAndSave(images, subreddit);
     }
