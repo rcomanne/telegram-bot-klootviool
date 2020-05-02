@@ -56,7 +56,7 @@ public class ImageUtility {
             if (image.getScore() < subreddit.getLowestFromAll()) {
                 log.debug("image {} with score {} is below threshold of {}", image.getId(), image.getScore(), scoreThreshold);
                 belowThreshold++;
-                break;
+                continue;
             }
 
             if (image.isNsfw()) {
