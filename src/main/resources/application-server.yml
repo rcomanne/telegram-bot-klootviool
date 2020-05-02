@@ -6,7 +6,7 @@ logging:
 
 spring:
   datasource:
-      url: jdbc:postgresql://localhost:5432/klootviool
+    url: jdbc:postgresql://localhost:5432/klootviool
   devtools:
     add-properties: false
   jpa:
