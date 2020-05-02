@@ -107,9 +107,14 @@ public class SubredditService {
     private List<SubredditImage> scrapeAndSaveAllTime(Subreddit subreddit) {
         log.info("scraping and saving {} for all time", subreddit.getName());
         List<SubredditImage> images = scraper.scrapeSubreddit(subreddit, "all");
+
+        if (images.isEmpty()) {
+            throw new IllegalStateException("no images found on Reddit for subreddit " + subreddit.getName());
+        }
+
         subreddit.setLowestFromAll(getLowestScore(images));
         subreddit.setThreshold(subreddit.getLowestFromAll() / 2);
-        log.debug("lowest score for subreddit {} is {}", subreddit.getName(), subreddit.getLowestFromAll());
+        log.debug("lowest score for subreddit {} is {}, threshold is {}", subreddit.getName(), subreddit.getLowestFromAll(), subreddit.getThreshold());
         return cleandAndSave(images, subreddit);
     }
 
@@ -118,7 +123,7 @@ public class SubredditService {
         for (SubredditImage image : images) {
             lowest = Math.min(image.getScore(), lowest);
         }
-        return lowest;
+        return lowest == Integer.MAX_VALUE ? 10 : lowest;
     }
 
     private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final Subreddit subreddit) {
