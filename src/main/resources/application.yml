@@ -13,7 +13,7 @@ subreddit:
 
 reddit:
   url:
-    base: https://www.reddit.com/
+    base: https://www.reddit.com
     topAfter: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&after={after}
     topBefore: ${reddit.url.base}/r/{subreddit}/top.json?sort=top&show=all&t={window}&limit={limit}&before={before}
 

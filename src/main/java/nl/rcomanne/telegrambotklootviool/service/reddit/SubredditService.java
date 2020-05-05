@@ -63,15 +63,15 @@ public class SubredditService {
         log.debug("scraping and saving async for subreddit: '{}'", subreddit.getName());
 
         if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusDays(1))) {
-            log.info("subreddit '{}' update has been more than one day ago, updating now...", subreddit);
+            log.info("subreddit '{}' update has been more than one day ago, updating now...", subreddit.getName());
 
             final String window = decideWindow(subreddit.getLastUpdated());
             List<SubredditImage> items = scraper.scrapeSubreddit(subreddit, window);
 
-            log.debug("scraped {} items for subreddit {}", items.size(), subreddit);
+            log.debug("scraped {} items for subreddit {}", items.size(), subreddit.getName());
             cleandAndSave(items, subreddit);
         } else {
-            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit, subreddit.getLastUpdated());
+            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit.getName(), subreddit.getLastUpdated());
         }
     }
 
@@ -165,9 +165,16 @@ public class SubredditService {
         }
     }
 
+    public boolean subredditIsEmpty(Subreddit subreddit) {
+        return imageRepository.findFirstBySubreddit(subreddit).isEmpty();
+    }
+
     public void removeSubreddit(Subreddit subreddit) {
-        imageRepository.deleteAllBySubreddit(subreddit);
-        subredditRepository.deleteSubredditByName(subreddit.getName());
+        try {
+            subredditRepository.deleteById(subreddit.getName());
+        } catch (Exception ex) {
+            log.error("failed to remove subreddit {}", subreddit.getName(), ex);
+        }
     }
 
     public List<Subreddit> getAllSubreddits() {

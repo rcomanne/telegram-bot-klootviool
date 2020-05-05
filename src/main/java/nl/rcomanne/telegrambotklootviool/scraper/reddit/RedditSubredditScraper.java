@@ -87,7 +87,7 @@ public class RedditSubredditScraper implements SubredditScraper {
                 log.warn("received {} error code... we probably can no longer scrape!", response.getStatusCodeValue());
             }
         } catch (Exception ex) {
-            log.warn("received client exception while retrieving images from Reddit. '{}'", ex.getMessage(), ex);
+            log.error("received client exception while retrieving images from Reddit. '{}'", ex.getMessage(), ex);
         }
         return new RedditSubredditResponse();
     }
