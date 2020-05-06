@@ -9,6 +9,7 @@ import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -18,8 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ScheduledTasks {
     private static final String ME_CHAT_ID = "620393195";
-
-    private final Random random = new Random();
 
     private final MessageService messageService;
     private final SubredditService redditService;
@@ -36,6 +35,9 @@ public class ScheduledTasks {
         List<Subreddit> notToUpdate = new ArrayList<>();
 
         for (Subreddit subreddit : subreddits) {
+            if (subreddit.getLastUpdated() == null) {
+                subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
+            }
             if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusWeeks(1))) {
                 log.info("subreddit {} has not been updated for more than one week, updating now", subreddit.getName());
                 try {
@@ -76,6 +78,7 @@ public class ScheduledTasks {
         messageService.sendMarkdownMessage(ME_CHAT_ID, markdown.toString());
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 2 * * *")
     public void cleanup() {
         log.debug("scheduled cleaning of database...");
@@ -98,13 +101,16 @@ public class ScheduledTasks {
         }
         subreddits = redditService.getAllSubreddits();
         markdown.append("\n## Available subreddits\n");
-        markdown.append("\n| Name | Images | Threshold | Last Updated |\n");
-        markdown.append("| --- | --- | --- | --- |\n");
-        for (Subreddit subreddit : subreddits) {
-            markdown.append(String.format("| %s ", subreddit.getName()));
-            markdown.append(String.format("| %d ", subreddit.getImages().size()));
-            markdown.append(String.format("| %d ", subreddit.getThreshold()));
-            markdown.append(String.format("| %s |\n", subreddit.getLastUpdated().toString()));
+
+        if (!subreddits.isEmpty()) {
+            markdown.append("\n| Name | Images | Threshold | Last Updated |\n");
+            markdown.append("| --- | --- | --- | --- |\n");
+            for (Subreddit subreddit : subreddits) {
+                markdown.append(String.format("| %s ", subreddit.getName()));
+                markdown.append(String.format("| %d ", subreddit.getImages().size()));
+                markdown.append(String.format("| %d ", subreddit.getThreshold()));
+                markdown.append(String.format("| %s |\n", subreddit.getLastUpdated().toString()));
+            }
         }
 
         markdown.append("\n## Banned subreddits\n");

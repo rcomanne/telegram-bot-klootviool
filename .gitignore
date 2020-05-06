@@ -47,4 +47,5 @@ fabric.properties
 
 # local profile for development containing credentials
 src/main/resources/application-dev.yml
+src/main/resources/application-dev.yaml
 config
