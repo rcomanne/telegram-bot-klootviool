@@ -37,6 +37,9 @@ public class ScheduledTasks {
         List<Subreddit> notToUpdate = new ArrayList<>();
 
         for (Subreddit subreddit : subreddits) {
+            if (subreddit.getLastUpdated() == null) {
+                subreddit.setLastUpdated(LocalDateTime.now().minusYears(1));
+            }
             if (subreddit.getLastUpdated().isBefore(LocalDateTime.now().minusWeeks(1))) {
                 log.info("subreddit {} has not been updated for more than one week, updating now", subreddit.getName());
                 try {
