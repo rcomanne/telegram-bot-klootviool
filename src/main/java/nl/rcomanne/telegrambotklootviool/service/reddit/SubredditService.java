@@ -156,19 +156,6 @@ public class SubredditService {
         subredditRepository.save(subreddit);
     }
 
-    public void removeSubredditIfEmpty(Subreddit subreddit) {
-        if (imageRepository.findFirstBySubreddit(subreddit).isEmpty()) {
-            log.debug("Subreddit {} is empty, removing...", subreddit.getName());
-            removeSubreddit(subreddit);
-        } else {
-            log.debug("Subreddit {} is NOT empty, do not remove", subreddit.getName());
-        }
-    }
-
-    public boolean subredditIsEmpty(Subreddit subreddit) {
-        return imageRepository.findFirstBySubreddit(subreddit).isEmpty();
-    }
-
     public void removeSubreddit(Subreddit subreddit) {
         try {
             subredditRepository.deleteById(subreddit.getName());

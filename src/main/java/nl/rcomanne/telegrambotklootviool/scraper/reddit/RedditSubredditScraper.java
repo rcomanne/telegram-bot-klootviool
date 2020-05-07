@@ -33,7 +33,7 @@ public class RedditSubredditScraper implements SubredditScraper {
 
     @Override
     public List<SubredditImage> scrapeSubreddit(Subreddit subreddit, String window) {
-        log.debug("start scraping subreddit '{}' from Reddit API", subreddit);
+        log.debug("start scraping subreddit '{}' from Reddit API", subreddit.getName());
         int request = 0;
         String after = "";
         List<SubredditImage> images = new ArrayList<>();
@@ -74,7 +74,7 @@ public class RedditSubredditScraper implements SubredditScraper {
         HttpHeaders headers = new HttpHeaders();
         // We need to set the user-agent header, else we get a 429 after 2 pages.
         headers.set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:70.0) Gecko/20100101 Firefox/70.0");
-        HttpEntity entity = new HttpEntity(headers);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
         try {
             ResponseEntity<RedditSubredditResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, RedditSubredditResponse.class);
             if (response.getStatusCode().is2xxSuccessful()) {

@@ -1,9 +1,7 @@
 package nl.rcomanne.telegrambotklootviool.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.rcomanne.telegrambotklootviool.domain.Subreddit;
 import nl.rcomanne.telegrambotklootviool.domain.SubredditImage;
-import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -22,29 +20,13 @@ public class MessageService extends DefaultAbsSender {
     @Value("${bot.token}")
     private String token;
 
-    private final SubredditService imageService;
-
-    public MessageService(final SubredditService imageService) {
+    public MessageService() {
         super(ApiContext.getInstance(DefaultBotOptions.class));
-        this.imageService = imageService;
     }
 
     @Override
     public String getBotToken() {
         return token;
-    }
-
-    public void sendMessageRandomPhoto(String chatId, String message) {
-        log.info("sending message to {}", chatId);
-        SubredditImage image = imageService.findRandom();
-        sendMessageWithPhoto(chatId, message, image);
-    }
-
-    public void sendMessageRandomPhoto(String chatId, String message, Subreddit subreddit) {
-        log.info("sending message to {}", chatId);
-        SubredditImage image = imageService.findRandomBySubreddit(subreddit.getName());
-        assert image != null;
-        sendMessageWithPhoto(chatId, message, image);
     }
 
     public void sendMessage(String chatId, String message) {
@@ -55,12 +37,12 @@ public class MessageService extends DefaultAbsSender {
         doSendMessage(sendMessage);
     }
 
-    public void sendMarkdownMessage(String chatId, String markdown) {
-        log.info("sending markdown message to {}", chatId);
+    public void sendHtmlMessage(String chatId, String html) {
+        log.info("sending html message to {}", chatId);
         SendMessage sendMessage = new SendMessage()
                 .setChatId(chatId)
-                .enableMarkdown(true)
-                .setText(markdown);
+                .enableHtml(true)
+                .setText(html);
         doSendMessage(sendMessage);
     }
 
@@ -81,7 +63,10 @@ public class MessageService extends DefaultAbsSender {
                 execute(message);
                 success = true;
             } catch (TelegramApiException ex) {
-                log.warn("failed to send message {}", message);
+                log.warn("failed to send message {}", message, ex);
+                if (ex instanceof TelegramApiRequestException) {
+                    log.warn("API Response: {}", ((TelegramApiRequestException) ex).getApiResponse());
+                }
             }
         } while (!success && retryCount < MAX_RETRY_COUNT);
     }

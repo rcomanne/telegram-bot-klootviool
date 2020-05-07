@@ -11,15 +11,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ScheduledTasks {
     private static final String ME_CHAT_ID = "620393195";
-
-    private final Random random = new Random();
 
     private final MessageService messageService;
     private final SubredditService redditService;
@@ -61,19 +62,20 @@ public class ScheduledTasks {
             }
         }
 
-        StringBuilder markdown = new StringBuilder();
-        markdown.append("# Generated daily update report\n");
-        markdown.append("## Updates\n");
+        StringBuilder html = new StringBuilder();
+        html.append("<b><u>Generated daily update report</u></b>\n");
+        html.append("<b>Updates</b>\n");
         for (Map.Entry<String, List<String>> entry : updatedSubreddits.entrySet()) {
             List<String> info = entry.getValue();
-            markdown.append(String.format("### %s\nHas been updated with %s images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
-        }
-        markdown.append("# Not updated\n");
-        for (Subreddit subreddit : notToUpdate) {
-            markdown.append(String.format("### %s\n", subreddit.getName()));
+            html.append(String.format("<i>%s</i>\nHas been updated with <i>%s<i> images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
         }
 
-        messageService.sendMarkdownMessage(ME_CHAT_ID, markdown.toString());
+        html.append("<b>Not updated</b>\n");
+        for (Subreddit subreddit : notToUpdate) {
+            html.append(String.format("<i>%s</i>\n", subreddit.getName()));
+        }
+
+        messageService.sendHtmlMessage(ME_CHAT_ID, html.toString());
     }
 
     @Scheduled(cron = "0 0 2 * * *")
@@ -81,37 +83,44 @@ public class ScheduledTasks {
         log.debug("scheduled cleaning of database...");
         List<Subreddit> subreddits = redditService.getAllSubreddits();
 
-        StringBuilder markdown = new StringBuilder();
-        markdown.append("# Generated daily cleanup report\n");
-        markdown.append("## Removed subreddits\n");
-        for (Subreddit subreddit : subreddits) {
-            for (String toRemoveName : bannedSubs) {
-                if (toRemoveName.equalsIgnoreCase(subreddit.getName())) {
+        StringBuilder html = new StringBuilder();
+
+        html.append("<b><u>Generated daily cleanup report</b></u>\n");
+        if (!subreddits.isEmpty()) {
+            html.append("<b>Removed subreddits</b>\n");
+            for (Subreddit subreddit : subreddits) {
+                for (String toRemoveName : bannedSubs) {
+                    if (toRemoveName.equalsIgnoreCase(subreddit.getName())) {
+                        redditService.removeSubreddit(subreddit);
+                        html.append(String.format("Removed <i>%s</i> because it is banned\n", subreddit.getName()));
+                    }
+                }
+                if (subreddit.getImages().isEmpty()) {
                     redditService.removeSubreddit(subreddit);
-                    markdown.append(String.format("- Removed %s because it is banned\n", subreddit.getName()));
+                    html.append(String.format("Removed </i>%s</i> because it is empty\n", subreddit.getName()));
                 }
             }
-            if (subreddit.getImages().isEmpty()) {
-                redditService.removeSubreddit(subreddit);
-                markdown.append(String.format("- Removed %s because it is empty\n", subreddit.getName()));
+        }
+
+        subreddits = redditService.getAllSubreddits();
+        if (!subreddits.isEmpty()) {
+            html.append("<b>Available subreddits</b>\n");
+
+            for (Subreddit subreddit : subreddits) {
+                html.append(String.format("<i>%s </i>", subreddit.getName()));
+                html.append(String.format("contains %d images ", subreddit.getImages().size()));
+                html.append(String.format("with a score threshold of %d ", subreddit.getThreshold()));
+                html.append(String.format("and last updated at %s\n", subreddit.getLastUpdated().toString()));
             }
         }
-        subreddits = redditService.getAllSubreddits();
-        markdown.append("\n## Available subreddits\n");
-        markdown.append("\n| Name | Images | Threshold | Last Updated |\n");
-        markdown.append("| --- | --- | --- | --- |\n");
-        for (Subreddit subreddit : subreddits) {
-            markdown.append(String.format("| %s ", subreddit.getName()));
-            markdown.append(String.format("| %d ", subreddit.getImages().size()));
-            markdown.append(String.format("| %d ", subreddit.getThreshold()));
-            markdown.append(String.format("| %s |\n", subreddit.getLastUpdated().toString()));
+
+        if (!bannedSubs.isEmpty()) {
+            html.append("<b>Banned subreddits</b>\n");
+            for (String subreddit : bannedSubs) {
+                html.append(String.format("<s>%s</s>\n", subreddit));
+            }
         }
 
-        markdown.append("\n## Banned subreddits\n");
-        for (String subreddit : bannedSubs) {
-            markdown.append(String.format("- %s\n", subreddit));
-        }
-
-        messageService.sendMarkdownMessage(ME_CHAT_ID, markdown.toString());
+        messageService.sendHtmlMessage(ME_CHAT_ID, html.toString());
     }
 }
