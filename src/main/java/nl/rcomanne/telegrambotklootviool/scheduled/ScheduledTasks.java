@@ -70,7 +70,7 @@ public class ScheduledTasks {
         html.append("<b>Updates</b>\n");
         for (Map.Entry<String, List<String>> entry : updatedSubreddits.entrySet()) {
             List<String> info = entry.getValue();
-            html.append(String.format("<i>%s</i>\nHas been updated with <i>%s<i> images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
+            html.append(String.format("<i>%s</i>\nHas been updated with <i>%s</i> images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
         }
 
         html.append("<b>Not updated</b>\n");
