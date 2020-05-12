@@ -9,6 +9,7 @@ import nl.rcomanne.telegrambotklootviool.repositories.SubredditRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.RedditSubredditScraper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class SubredditService {
             log.debug("scraped {} items for subreddit {}", items.size(), subreddit.getName());
             cleandAndSave(items, subreddit);
         } else {
-            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit.getName(), subreddit.getLastUpdated());
+            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit.getName(), subreddit.getLastUpdatedString());
         }
     }
 
@@ -164,6 +165,7 @@ public class SubredditService {
         }
     }
 
+    @Transactional
     public List<Subreddit> getAllSubreddits() {
         return subredditRepository.findAll();
     }

@@ -9,6 +9,7 @@ import nl.rcomanne.telegrambotklootviool.service.reddit.SubredditService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class ScheduledTasks {
     @Value("#{'${subreddit.banned}'.split(',')}")
     private List<String> bannedSubs;
 
-
+    @Transactional
     @Scheduled(cron = "0 0 4 * * *")
     public void updateSubreddits() {
         log.info("scheduled updating subreddits");
@@ -68,9 +69,11 @@ public class ScheduledTasks {
         StringBuilder html = new StringBuilder();
         html.append("<b><u>Generated daily update report</u></b>\n");
         html.append("<b>Updates</b>\n");
+        ArrayList<String> updatedMessages = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : updatedSubreddits.entrySet()) {
             List<String> info = entry.getValue();
-            html.append(String.format("<i>%s</i>\nHas been updated with <i>%s</i> images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
+            html.append(String.format("<i><b>%s</b></i>\nHas been updated with <i>%s</i> images\n", entry.getKey(), info.get(0)));
+            updatedMessages.add(String.format("<b><u>%s</u></b>\n![%s](%s)", entry.getKey(), info.get(1), info.get(2)));
         }
 
         html.append("<b>Not updated</b>\n");
@@ -79,8 +82,12 @@ public class ScheduledTasks {
         }
 
         messageService.sendHtmlMessage(ME_CHAT_ID, html.toString());
+        for (String message : updatedMessages) {
+            messageService.sendHtmlMessage(ME_CHAT_ID, message);
+        }
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 2 * * *")
     public void cleanup() {
         log.debug("scheduled cleaning of database...");
@@ -88,19 +95,19 @@ public class ScheduledTasks {
 
         StringBuilder html = new StringBuilder();
 
-        html.append("<b><u>Generated daily cleanup report</b></u>\n");
+        html.append("<b><u>Generated daily cleanup report</u></b>\n");
         if (!subreddits.isEmpty()) {
             html.append("<b>Removed subreddits</b>\n");
             for (Subreddit subreddit : subreddits) {
                 for (String toRemoveName : bannedSubs) {
                     if (toRemoveName.equalsIgnoreCase(subreddit.getName())) {
                         redditService.removeSubreddit(subreddit);
-                        html.append(String.format("Removed <i>%s</i> because it is banned\n", subreddit.getName()));
+                        html.append(String.format("Removed <i><b>%s</b></i> because it is banned\n", subreddit.getName()));
                     }
                 }
                 if (subreddit.getImages().isEmpty()) {
                     redditService.removeSubreddit(subreddit);
-                    html.append(String.format("Removed </i>%s</i> because it is empty\n", subreddit.getName()));
+                    html.append(String.format("Removed </i><b>%s</b></i> because it is empty\n", subreddit.getName()));
                 }
             }
         }
@@ -110,10 +117,10 @@ public class ScheduledTasks {
             html.append("<b>Available subreddits</b>\n");
 
             for (Subreddit subreddit : subreddits) {
-                html.append(String.format("<i>%s </i>", subreddit.getName()));
+                html.append(String.format("<i><b>%s </b></i>", subreddit.getName()));
                 html.append(String.format("contains %d images ", subreddit.getImages().size()));
                 html.append(String.format("with a score threshold of %d ", subreddit.getThreshold()));
-                html.append(String.format("and last updated at %s\n", subreddit.getLastUpdated().toString()));
+                html.append(String.format("and last updated at %s\n", subreddit.getLastUpdatedString()));
             }
         }
 

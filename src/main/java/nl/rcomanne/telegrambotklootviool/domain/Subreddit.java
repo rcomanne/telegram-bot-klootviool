@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity(name = "Subreddit")
@@ -27,5 +28,10 @@ public class Subreddit {
             orphanRemoval = true
     )
     private List<SubredditImage> images;
+
+    public String getLastUpdatedString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        return lastUpdated.format(formatter);
+    }
 
 }
