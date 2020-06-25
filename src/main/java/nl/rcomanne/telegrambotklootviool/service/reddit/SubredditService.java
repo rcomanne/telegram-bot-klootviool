@@ -72,7 +72,7 @@ public class SubredditService {
             log.debug("scraped {} items for subreddit {}", items.size(), subreddit.getName());
             cleandAndSave(items, subreddit);
         } else {
-            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit.getName(), subreddit.getLastUpdated());
+            log.info("subreddit '{}' doesn't have to be updated, last update was: {}", subreddit.getName(), subreddit.getLastUpdatedString());
         }
     }
 

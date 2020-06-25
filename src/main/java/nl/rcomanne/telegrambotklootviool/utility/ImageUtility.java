@@ -58,7 +58,7 @@ public class ImageUtility {
         long scoreThreshold = subreddit.getThreshold();
         for (SubredditImage image : images) {
             if (image.getScore() < scoreThreshold) {
-                log.debug("image {} with score {} is below threshold of {}", image.getId(), image.getScore(), scoreThreshold);
+                log.trace("image {} with score {} is below threshold of {}", image.getId(), image.getScore(), scoreThreshold);
                 belowThreshold++;
                 continue;
             }

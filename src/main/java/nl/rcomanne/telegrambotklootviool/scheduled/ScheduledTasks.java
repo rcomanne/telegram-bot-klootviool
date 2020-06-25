@@ -72,9 +72,11 @@ public class ScheduledTasks {
         StringBuilder html = new StringBuilder();
         html.append("<b><u>Generated daily update report</u></b>\n");
         html.append("<b>Updated</b>\n");
+        ArrayList<String> updatedMessages = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : updatedSubreddits.entrySet()) {
             List<String> info = entry.getValue();
-            markdown.append(String.format("_%s_ has been updated with _%s_ images!\n[%s][%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
+            markdown.append(String.format("_%s_ has been updated with _%s_ images!\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
+            updatedMessages.add(String.format("*__%s__*\n![%s](%s)", entry.getKey(), info.get(1), info.get(2)));
             html.append(String.format("<i>%s</i>\nHas been updated with <i>%s<i> images\n![%s](%s)\n", entry.getKey(), info.get(0), info.get(1), info.get(2)));
         }
 
@@ -86,11 +88,14 @@ public class ScheduledTasks {
         }
 
         messageService.sendMarkdownMessage(ME_CHAT_ID, markdown.toString());
+        for (String message : updatedMessages) {
+            messageService.sendMarkdownMessage(ME_CHAT_ID, message.toString());
+        }
 //        messageService.sendHtmlMessage(ME_CHAT_ID, html.toString());
     }
 
     @Transactional
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 2 * * *")
     public void cleanup() {
         log.debug("scheduled cleaning of database...");
         List<Subreddit> subreddits = redditService.getAllSubreddits();
@@ -99,7 +104,7 @@ public class ScheduledTasks {
         StringBuilder markdown = new StringBuilder();
 
         markdown.append("*__Generated daily cleanup report__*\n");
-        html.append("<b><u>Generated daily cleanup report</b></u>\n");
+        html.append("<b><u>Generated daily cleanup report</u></b>\n");
         if (!subreddits.isEmpty()) {
             markdown.append("*Removed subreddits*\n");
             html.append("<b>Removed subreddits</b>\n");
@@ -107,13 +112,13 @@ public class ScheduledTasks {
                 for (String toRemoveName : bannedSubs) {
                     if (toRemoveName.equalsIgnoreCase(subreddit.getName())) {
                         redditService.removeSubreddit(subreddit);
-                        markdown.append(String.format("Removed _%s_ because it is banned\n", subreddit.getName()));
+                        markdown.append(String.format("Removed *_%s_* because it is banned\n", subreddit.getName()));
                         html.append(String.format("Removed <i>%s</i> because it is banned\n", subreddit.getName()));
                     }
                 }
                 if (subreddit.getImages().isEmpty()) {
                     redditService.removeSubreddit(subreddit);
-                    markdown.append(String.format("Removed _%s_ because it is empty\n", subreddit.getName()));
+                    markdown.append(String.format("Removed _*%s*_ because it is empty\n", subreddit.getName()));
                     html.append(String.format("Removed </i>%s</i> because it is empty\n", subreddit.getName()));
                 }
             }
@@ -124,10 +129,10 @@ public class ScheduledTasks {
             html.append("<b>Available subreddits</b>\n");
 
             for (Subreddit subreddit : subreddits) {
-                markdown.append(String.format("_%s_ \n", subreddit.getName()));
-                markdown.append(String.format("contains %d images\n", subreddit.getImages().size()));
-                markdown.append(String.format("with a score threshold of %d\n", subreddit.getThreshold()));
-                markdown.append(String.format("and last updated at %s \n\n", subreddit.getLastUpdated().toString()));
+                markdown.append(String.format("_*%s*_ ", subreddit.getName()));
+                markdown.append(String.format("contains %d images ", subreddit.getImages().size()));
+                markdown.append(String.format("with a score threshold of %d.\n", subreddit.getThreshold()));
+                markdown.append(String.format("Last updated at %s \n\n", subreddit.getLastUpdated().toString()));
                 html.append(String.format("<i>%s </i>\n", subreddit.getName()));
                 html.append(String.format("contains %d images\n", subreddit.getImages().size()));
                 html.append(String.format("with a score threshold of %d\n", subreddit.getThreshold()));
