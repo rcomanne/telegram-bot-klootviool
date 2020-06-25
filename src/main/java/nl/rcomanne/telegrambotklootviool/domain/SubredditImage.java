@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 public class SubredditImage implements Serializable {
     @Transient
     private static final long serialVersionUID = 5599518219056237194L;

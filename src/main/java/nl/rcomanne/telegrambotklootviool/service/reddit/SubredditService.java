@@ -9,6 +9,7 @@ import nl.rcomanne.telegrambotklootviool.repositories.SubredditRepository;
 import nl.rcomanne.telegrambotklootviool.scraper.reddit.RedditSubredditScraper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -127,8 +128,9 @@ public class SubredditService {
     }
 
     private List<SubredditImage> cleandAndSave(List<SubredditImage> images, final Subreddit subreddit) {
-        log.info("saving {} items for {}", images.size(), subreddit.getName());
+        log.info("cleaning {} items for {}", images.size(), subreddit.getName());
         List<SubredditImage> cleanList = cleanList(images, subreddit);
+        log.info("saving {} cleaned items for {}", cleanList.size(), subreddit.getName());
         imageRepository.saveAll(cleanList);
         updateSubredditLastUpdated(subreddit);
         log.info("saved {} items from subreddit {}", cleanList.size(), subreddit.getName());
@@ -164,6 +166,7 @@ public class SubredditService {
         }
     }
 
+    @Transactional
     public List<Subreddit> getAllSubreddits() {
         return subredditRepository.findAll();
     }

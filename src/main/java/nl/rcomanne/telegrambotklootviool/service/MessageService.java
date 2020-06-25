@@ -46,6 +46,15 @@ public class MessageService extends DefaultAbsSender {
         doSendMessage(sendMessage);
     }
 
+    public void sendMarkdownMessage(String chatId, String markdown) {
+        log.info("sending markdown message to {}", chatId);
+        SendMessage sendMessage = new SendMessage()
+                .setChatId(chatId)
+                .enableMarkdown(true)
+                .setText(markdown);
+        doSendMessage(sendMessage);
+    }
+
     public void sendMessageWithPhoto(String chatId, String message, SubredditImage image) {
         log.info("send photo '{}' with message '{}'", image.getImageLink(), message);
         SendMessage sendPhoto = new SendMessage()
