@@ -84,6 +84,7 @@ public class SubredditService {
         return subredditRepository.save(Subreddit.builder()
                 .name(subredditName)
                 .images(new ArrayList<>())
+                .lastUpdated(LocalDateTime.MIN)
                 .build());
     }
 

@@ -129,14 +129,18 @@ public class ScheduledTasks {
             html.append("<b>Available subreddits</b>\n");
 
             for (Subreddit subreddit : subreddits) {
-                markdown.append(String.format("_*%s*_ ", subreddit.getName()));
-                markdown.append(String.format("contains %d images ", subreddit.getImages().size()));
-                markdown.append(String.format("with a score threshold of %d.\n", subreddit.getThreshold()));
-                markdown.append(String.format("Last updated at %s \n\n", subreddit.getLastUpdated().toString()));
-                html.append(String.format("<i>%s </i>\n", subreddit.getName()));
-                html.append(String.format("contains %d images\n", subreddit.getImages().size()));
-                html.append(String.format("with a score threshold of %d\n", subreddit.getThreshold()));
-                html.append(String.format("and last updated at %s\n\n", subreddit.getLastUpdated().toString()));
+                try {
+                    markdown.append(String.format("_*%s*_ ", subreddit.getName()));
+                    markdown.append(String.format("contains %d images ", subreddit.getImages().size()));
+                    markdown.append(String.format("with a score threshold of %d.\n", subreddit.getThreshold()));
+                    markdown.append(String.format("Last updated at %s \n\n", subreddit.getLastUpdated().toString()));
+                    html.append(String.format("<i>%s </i>\n", subreddit.getName()));
+                    html.append(String.format("contains %d images\n", subreddit.getImages().size()));
+                    html.append(String.format("with a score threshold of %d\n", subreddit.getThreshold()));
+                    html.append(String.format("and last updated at %s\n\n", subreddit.getLastUpdated().toString()));
+                } catch (Exception ex) {
+                    log.warn("exception while parsing for subreddit {}", subreddit.getName());
+                }
             }
         }
 
